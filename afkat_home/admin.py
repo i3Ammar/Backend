@@ -1,0 +1,16 @@
+from django.contrib import admin
+from afkat_home.models import Tag, Post, Comment, AuthorProfile
+
+
+# Register your models here.
+
+
+class PostAdmin(admin.ModelAdmin):
+    prepopulated_fields = {"slug": ("title",)}
+    list_display = ("slug", "published_at")
+
+
+admin.site.register(Tag)
+admin.site.register(Comment)
+admin.site.register(Post, PostAdmin)
+admin.site.register(AuthorProfile)
