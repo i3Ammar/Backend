@@ -42,7 +42,7 @@ LOCAL_APPS = [
 ]
 THIRD_PARTY_APPS = [
     'rest_framework',
-    'rest_framework.authtoken',
+    # 'rest_framework.authtoken',
     'debug_toolbar',
     'django_registration',
     'django_browser_reload',
@@ -63,7 +63,7 @@ INSTALLED_APPS = [
 
 THIRD_PARTY_MIDDLEWARE = [
     'debug_toolbar.middleware.DebugToolbarMiddleware',
-    'allauth.account.middleware.AccountMiddleware',
+    # 'allauth.account.middleware.AccountMiddleware',
 ]
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
