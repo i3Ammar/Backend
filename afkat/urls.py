@@ -19,14 +19,22 @@ from django.contrib import admin
 from django.urls import path , include
 from django.conf import settings
 from django.conf.urls.static import static
+import afkat_home.views
 
 import debug_toolbar
 import afkat_auth.views
+from afkat_auth.forms import UserRegistrationForm
+
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path ('accounts/', include ('django_registration.backends.one_step.urls')) ,
-    path('accounts/', include ('django.contrib.auth.urls')) ,
-    path ('accounts/profile/',afkat_auth.views.profile , name = 'profile') ,
-    # path ('accounts/register/', )
+    path('',afkat_home.views.index , name = "home"),
+    path ('', include ('afkat_auth.urls')),
+
+]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+
+if settings.DEBUG:
+    urlpatterns += [
+    path('__debug__/', include(debug_toolbar.urls)),
     path("__reload__/", include("django_browser_reload.urls")),
-]
+    ]

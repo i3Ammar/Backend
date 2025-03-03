@@ -32,9 +32,10 @@ class AfkatUserManger(UserManager):
 
 
 class User(AbstractUser):
-    username = None
-    first_name = models.CharField(max_length=30, blank=False, null=False)
-    last_name = models.CharField(max_length=30, blank=False, null=False)
+    name = models.CharField(_("Name of User"), blank = True, max_length=255)
+    first_name = None  # type: ignore[assignment]
+    last_name = None  # type: ignore[assignment]
+    username = None  # type: ignore[assignment]
     email = models.EmailField(_("email address"), unique=True)
     objects = AfkatUserManger()
 

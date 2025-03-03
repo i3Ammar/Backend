@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 import environ
+import dj_database_url
 from pathlib import Path
 env = environ.Env()
 environ.Env.read_env()
@@ -31,6 +32,8 @@ ALLOWED_HOSTS = []
 
 AUTH_USER_MODEL = "afkat_auth.User"
 SITE_ID = 1
+LOGIN_REDIRECT_URL = "home"
+LOGOUT_REDIRECT_URL = "home"
 
 # Application definition
 LOCAL_APPS = [
@@ -38,8 +41,15 @@ LOCAL_APPS = [
     'afkat_auth',
 ]
 THIRD_PARTY_APPS = [
+    'rest_framework',
+    'rest_framework.authtoken',
+    'debug_toolbar',
     'django_registration',
-    'django_browser_reload'
+    'django_browser_reload',
+    'django_filters',
+    "crispy_forms",
+    "crispy_bootstrap5",
+
 ]
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -50,8 +60,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',
 ]+ THIRD_PARTY_APPS + LOCAL_APPS
+
 THIRD_PARTY_MIDDLEWARE = [
     'debug_toolbar.middleware.DebugToolbarMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
 ]
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -65,12 +77,13 @@ MIDDLEWARE = [
 
 
 ROOT_URLCONF = 'afkat.urls'
+MEDIA_ROOT = BASE_DIR / "media"
+MEDIA_URL = "/media/"
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates']
-        ,
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -84,6 +97,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'afkat.wsgi.application'
+INTERNAL_IPS = ['127.0.0.1']
 
 
 # Database
@@ -94,14 +108,19 @@ DATABASES = {
     #     'ENGINE': 'django.db.backends.sqlite3',
     #     'NAME': BASE_DIR / 'db.sqlite3',
     # }
-    'default': {
-        'ENGINE' : 'django.db.backends.postgresql_psycopg2',
-        'NAME' : env("DB_NAME"),
-        'USER': env("DB_USER"),
-        'PASSWORD' : env("DB_PASSWORD"),
-        'HOST' : env("DB_HOST"),
-        'PORT' : env("DB_PORT"),
-    }
+    # 'default': {
+    #     'ENGINE' : 'django.db.backends.postgresql_psycopg2',
+    #     'NAME' : env("DB_NAME"),
+    #     'USER': env("DB_USER"),
+    #     'PASSWORD' : env("DB_PASSWORD"),
+    #     'HOST' : env("DB_HOST"),
+    #     'PORT' : env("DB_PORT"),
+    # }
+    'default': dj_database_url.config(
+        default =  'postgres://postgres:'+env("DB_PASSWORD")+'@localhost:5432/afkat',
+        conn_max_age = 600 ,
+        conn_health_checks = True ,
+    )
 }
 
 
@@ -146,3 +165,15 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+DEBUG_TOOLBAR_CONFIG = {
+    "DISABLE_PANELS": [
+        "debug_toolbar.panels.redirects.RedirectsPanel",
+        # Disable profiling panel due to an issue with Python 3.12:
+        # https://github.com/jazzband/django-debug-toolbar/issues/1875
+        "debug_toolbar.panels.profiling.ProfilingPanel",
+    ],
+    "SHOW_TEMPLATE_CONTEXT": True,
+}
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_TEMPLATE_PACK = "bootstrap5"
