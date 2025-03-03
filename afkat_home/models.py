@@ -2,6 +2,7 @@ from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelatio
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.conf import settings
+from django.contrib.auth.models import User
 from django.utils.text import slugify
 # Create your models here.
 
@@ -44,3 +45,17 @@ class AuthorProfile(models.Model):
 
     def __str__(self):
         return f"{self.__class__.__name__} object for {self.user}"
+
+
+# class Game(models.Model):
+#     title = models.CharField(max_length = 200)
+#     description = models.TextField()
+#     game_file = models.FileField(upload_to = 'games/')
+#     thumbnail = models.ImageField(upload_to = 'thumbnails/', null = True, blank = True)
+#     creator = models.ForeignKey(User, on_delete = models.CASCADE)
+#     created_at = models.DateTimeField(auto_now_add = True)
+#     updated_at = models.DateTimeField(auto_now = True)
+#
+#     def __str__(self):
+#         return self.title
+

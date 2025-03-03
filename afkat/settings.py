@@ -30,6 +30,8 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 AUTH_USER_MODEL = "afkat_auth.User"
+SITE_ID = 1
+
 # Application definition
 LOCAL_APPS = [
     'afkat_home',
@@ -46,7 +48,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # 'django.contrib.sites',
+    'django.contrib.sites',
 ]+ THIRD_PARTY_APPS + LOCAL_APPS
 THIRD_PARTY_MIDDLEWARE = [
     'debug_toolbar.middleware.DebugToolbarMiddleware',
