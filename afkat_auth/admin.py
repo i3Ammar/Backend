@@ -8,7 +8,7 @@ from django.utils.translation import gettext_lazy as _
 class AfkatUserAdmin(UserAdmin):
     fieldsets = (
         (None, {"fields": ("email", "password")}),
-        (_("Personal info"), {"fields": ("name",)}),
+        (_("Personal info"), {"fields": ("username","phone","country","role")}),
         (
             _("Permissions"),
             {

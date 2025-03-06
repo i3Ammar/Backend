@@ -1,6 +1,11 @@
+from django.core.validators import RegexValidator
 from django.db import models
 from django.contrib.auth.models import AbstractUser, UserManager
 from django.utils.translation import gettext_lazy as _
+from django_countries.fields import CountryField
+
+from phonenumber_field.modelfields import PhoneNumberField
+
 
 
 # Create your models here.
@@ -32,10 +37,19 @@ class AfkatUserManger(UserManager):
 
 
 class User(AbstractUser):
-    name = models.CharField(_("Name of User"), blank = True, max_length=255)
-    first_name = None  # type: ignore[assignment]
-    last_name = None  # type: ignore[assignment]
-    username = None  # type: ignore[assignment]
+    username = models.CharField(_("Username") ,blank = True,unique = True, max_length=150,)
+    phone = PhoneNumberField(_("Phone Number"), blank=True,region =  None)
+    country = CountryField(blank_label = ("Select Country"), blank=True)
+    ROLE_CHOICES = (
+        ("admin",_("Administrator")),
+        ("user",_("User")),
+        ("developer",_("Developer")),
+        ("designer",_("Designer")),
+    )
+    role = models.CharField(_("Role"), choices = ROLE_CHOICES, default = 'user')
+    first_name = None
+    last_name = None
+    profile_image = models.ImageField(upload_to="profile_pics/", blank = True, null = True )
     email = models.EmailField(_("email address"), unique=True)
     objects = AfkatUserManger()
 
@@ -44,3 +58,12 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.email
+    @property
+    def is_developer(self):
+        return self.role == "developer"
+    @property
+    def is_designer(self):
+        return self.role == "designer"
+    @property
+    def is_admin(self):
+        return self.role == "admin"

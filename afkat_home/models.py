@@ -52,10 +52,13 @@ class AuthorProfile(models.Model):
 #     description = models.TextField()
 #     game_file = models.FileField(upload_to = 'games/')
 #     thumbnail = models.ImageField(upload_to = 'thumbnails/', null = True, blank = True)
-#     creator = models.ForeignKey(User, on_delete = models.CASCADE)
+#     creator = models.ForeignKey(setting.AUTH_USER_MODEL, on_delete = models.CASCADE)
 #     created_at = models.DateTimeField(auto_now_add = True)
 #     updated_at = models.DateTimeField(auto_now = True)
-#
+#     download_count  = models.IntegerField(default = 0)
+#     rating = models.FloatField(default=0)
+
+#     dont forget to add (progress, achievements)
 #     def __str__(self):
 #         return self.title
 
