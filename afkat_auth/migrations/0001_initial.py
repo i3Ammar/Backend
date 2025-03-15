@@ -36,7 +36,7 @@ class Migration(migrations.Migration):
                 'abstract': False,
             },
             managers=[
-                ('objects', afkat_auth.models.AfkatUserManger()),
+                ('objects', afkat_auth.models.AfkatUserManager()),
             ],
         ),
     ]

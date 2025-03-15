@@ -14,21 +14,31 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django_registration.backends.one_step.views import RegistrationView
 from django.contrib import admin
 from django.urls import path , include
 from django.conf import settings
 from django.conf.urls.static import static
+from django.views.generic import TemplateView
+
 import afkat_home.views
-
 import debug_toolbar
-import afkat_auth.views
-from afkat_auth.forms import UserRegistrationForm
 
+
+
+# schema_view = get_schema_view(
+#     openapi.Info(
+#         title="AFKAT API",
+#         default_version="v1",
+#         description="API for AFKAT",
+#     ),
+#     url="http://127.0.0.1:8000/api/v1/",
+#     public=True,
+# )
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('',afkat_home.views.index , name = "home"),
     path ('', include ('afkat_auth.urls')),
+
 
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

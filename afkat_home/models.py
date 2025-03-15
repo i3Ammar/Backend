@@ -2,8 +2,6 @@ from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelatio
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.conf import settings
-from django.contrib.auth.models import User
-from django.utils.text import slugify
 # Create your models here.
 
 class Tag(models.Model):
@@ -31,34 +29,13 @@ class Post (models.Model):
     slug = models.SlugField(unique=True , default = "default-slug")
     summary = models.TextField(max_length=500 , null  = True)
     content = models.TextField()
+    image = models.ImageField(upload_to='post_images/', null=True, blank=True)
     tags = models.ManyToManyField(Tag, related_name="posts")
     comments = GenericRelation(Comment)
 
     def __str__(self):
         return self.title
 
-class AuthorProfile(models.Model):
-    user = models.OneToOneField(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="profile"
-    )
-    bio = models.TextField()
-
-    def __str__(self):
-        return f"{self.__class__.__name__} object for {self.user}"
 
 
-# class Game(models.Model):
-#     title = models.CharField(max_length = 200)
-#     description = models.TextField()
-#     game_file = models.FileField(upload_to = 'games/')
-#     thumbnail = models.ImageField(upload_to = 'thumbnails/', null = True, blank = True)
-#     creator = models.ForeignKey(setting.AUTH_USER_MODEL, on_delete = models.CASCADE)
-#     created_at = models.DateTimeField(auto_now_add = True)
-#     updated_at = models.DateTimeField(auto_now = True)
-#     download_count  = models.IntegerField(default = 0)
-#     rating = models.FloatField(default=0)
-
-#     dont forget to add (progress, achievements)
-#     def __str__(self):
-#         return self.title
 

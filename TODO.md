@@ -1,6 +1,6 @@
 Here are some additional features you can implement to enhance the user experience in your Django-based web application:
 
-1. **User Profiles**: Allow users to create and customize their profiles with avatars, bios, and social media links.
+[//]: # (1. **User Profiles**: Allow users to create and customize their profiles with avatars, bios, and social media links.)
 
 2. **Search Functionality**: Implement a search feature to allow users to find posts, games, or other content easily.
 

@@ -9,17 +9,17 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
-import environ
-import dj_database_url
-from pathlib import Path
 from datetime import timedelta
+from pathlib import Path
+
+import dj_database_url
+import environ
 
 env = environ.Env()
 environ.Env.read_env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
@@ -41,47 +41,62 @@ LOGOUT_REDIRECT_URL = "home"
 LOCAL_APPS = [
     'afkat_home',
     'afkat_auth',
+    'afkat_game'
 ]
 THIRD_PARTY_APPS = [
     'rest_framework',
-    # 'rest_framework.authtoken',
+    'corsheaders',
     'rest_framework_simplejwt',
+    'rest_framework.authtoken',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'dj_rest_auth.registration',
+    'dj_rest_auth',
     'debug_toolbar',
     'django_registration',
     'django_browser_reload',
     'django_filters',
     'crispy_forms',
     'crispy_bootstrap5',
-    'corsheaders',
     'django_countries',
     'phonenumber_field',
+    'drf_yasg'
 
 ]
 INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'django.contrib.sites',
-]+ THIRD_PARTY_APPS + LOCAL_APPS
+                     'django.contrib.admin',
+                     'django.contrib.auth',
+                     'django.contrib.contenttypes',
+                     'django.contrib.sessions',
+                     'django.contrib.messages',
+                     'django.contrib.staticfiles',
+                     'django.contrib.sites',
+                 ] + THIRD_PARTY_APPS + LOCAL_APPS
 
 THIRD_PARTY_MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
-    # 'allauth.account.middleware.AccountMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
 ]
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-]+THIRD_PARTY_MIDDLEWARE
+                 'django.middleware.security.SecurityMiddleware',
+                 'django.contrib.sessions.middleware.SessionMiddleware',
+                 'corsheaders.middleware.CorsMiddleware',
+                 'django.middleware.common.CommonMiddleware',
+                 'django.middleware.csrf.CsrfViewMiddleware',
+                 'django.contrib.auth.middleware.AuthenticationMiddleware',
+                 # "django.contrib.auth.middleware.LoginRequiredMiddleware",
+                 'django.contrib.messages.middleware.MessageMiddleware',
+                 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
+             ] + THIRD_PARTY_MIDDLEWARE
+
+# CSRF_COOKIE_SECURE = False  # Set to True in production
+# CSRF_USE_SESSIONS = False
+# CSRF_COOKIE_HTTPONLY = False
+CSRF_TRUSTED_ORIGINS = ['http://localhost:8000', 'http://127.0.0.1:8000',
+                        "https://ec62-2a01-9700-4200-4700-33de-9eba-4faa-1df2.ngrok-free.app"]
+# SESSION_COOKIE_SECURE = False
 
 ROOT_URLCONF = 'afkat.urls'
 MEDIA_ROOT = BASE_DIR / "media"
@@ -106,7 +121,6 @@ TEMPLATES = [
 WSGI_APPLICATION = 'afkat.wsgi.application'
 INTERNAL_IPS = ['127.0.0.1']
 
-
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
@@ -124,13 +138,11 @@ DATABASES = {
     #     'PORT' : env("DB_PORT"),
     # }
     'default': dj_database_url.config(
-        default =  'postgres://postgres:'+env("DB_PASSWORD")+'@localhost:5432/afkat',
-        conn_max_age = 600 ,
-        conn_health_checks = True ,
+        default = 'postgres://postgres:' + env("DB_PASSWORD") + '@localhost:5432/afkat',
+        conn_max_age = 600,
+        conn_health_checks = True,
     )
 }
-
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -150,7 +162,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
@@ -162,7 +173,6 @@ USE_I18N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
@@ -172,9 +182,6 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-
-
 
 DEBUG_TOOLBAR_CONFIG = {
     "DISABLE_PANELS": [
@@ -186,26 +193,42 @@ DEBUG_TOOLBAR_CONFIG = {
     "SHOW_TEMPLATE_CONTEXT": True,
 }
 REST_FRAMEWORK = {
-    'DEFAULT_PERMISSIONS_CLASSES' : (
-        'rest_framework.permissions.IsAuthenticated',
-    ),
+    'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.IsAuthenticated',),
     'DEFAULT_AUTHENTICATION_CLASSES': [
+        # 'rest_framework.authentication.SessionAuthentication',
+        # 'rest_framework.authentication.BaseAuthentication',
         'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'dj_rest_auth.jwt_auth.JWTCookieAuthentication',
     ],
 }
-SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
-    'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
-    'SLIDING_TOKEN_LIFETIME': timedelta(days=30),
-    'SLIDING_TOKEN_REFRESH_LIFETIME_LATE_USER': timedelta(days=1),
-    'SLIDING_TOKEN_LIFETIME_LATE_USER': timedelta(days=30),
+
+REST_AUTH = {
+    'USE_JWT': True,
+    'JWT_AUTH_COOKIE': 'afkat-auth',
+    'JWT_AUTH_REFRESH_COOKIE': 'afkat-refresh-token',
+
+    'LOGIN_SERIALIZER': 'afkat_auth.serializers.UserLoginSerializer',
+    'REGISTER_SERIALIZER': 'afkat_auth.serializers.CustomRegisterSerializer',
+    'USER_DETAILS_SERIALIZER': 'afkat_auth.serializers.UserProfileSerializer',
 }
+# ACCOUNT_AUTHENTICATION_METHOD = "email"  # Use Email / Password authentication
+ACCOUNT_LOGIN_METHODS = {'email'}   #not depricated
+ACCOUNT_USERNAME_REQUIRED = True
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_EMAIL_VERIFICATION = "none"
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(days = 1),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days = 5),
+}
+
 # CONN_MAX_AGE = 600
 # CONN_HEALTH_CHECKS = True
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 ACCOUNT_ACTIVATION_DAYS = 7
 REGISTRATION_OPEN = True
+
 CORS_ALLOW_METHODS = [
     'DELETE',
     'GET',
@@ -224,5 +247,24 @@ CORS_ALLOW_HEADERS = [
     'user-agent',
     'x-csrftoken',
     'x-requested-with',
+    'access-control-allow-origin',
 ]
-CORS_ALLOWED_ALL_ORIGINS = True
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
+
+CORS_ORIGIN_WHITELIST = (
+    'http://localhost:3000',  # for localhost (REACT Default)
+    'http://192.168.0.50:3000',  # for network
+    'http://localhost:8080',  # for localhost (Developlemt)
+    'http://192.168.0.50:8080',  # for network (Development)
+)
+
+
+# AUTHENTICATION_BACKENDS = [
+#     # Needed to login by username in Django admin, regardless of allauth
+#     # 'django.contrib.auth.backends.ModelBackend',
+#
+#     # allauth specific authentication methods, such as login by e-mail
+#     # 'allauth.account.auth_backends.AuthenticationBackend',
+# ]

@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from afkat_auth.models import User
+from afkat_auth.models import User, Profile
 from django.utils.translation import gettext_lazy as _
 
 
@@ -8,7 +8,7 @@ from django.utils.translation import gettext_lazy as _
 class AfkatUserAdmin(UserAdmin):
     fieldsets = (
         (None, {"fields": ("email", "password")}),
-        (_("Personal info"), {"fields": ("username","phone","country","role")}),
+        (_("Personal info"), {"fields": ('username','role')}),
         (
             _("Permissions"),
             {
@@ -38,3 +38,4 @@ class AfkatUserAdmin(UserAdmin):
 
 
 admin.site.register(User, AfkatUserAdmin)
+admin.site.register(Profile)

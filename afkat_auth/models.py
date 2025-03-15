@@ -1,15 +1,19 @@
-from django.core.validators import RegexValidator
+from email.policy import default
+
 from django.db import models
 from django.contrib.auth.models import AbstractUser, UserManager
+from django.db.models.signals import post_save
 from django.utils.translation import gettext_lazy as _
-from django_countries.fields import CountryField
+from django.db.models.signals import post_save
 
+from django_countries.serializer_fields import  CountryField
+from django_countries.fields import CountryField
 from phonenumber_field.modelfields import PhoneNumberField
 
 
 
 # Create your models here.
-class AfkatUserManger(UserManager):
+class AfkatUserManager(UserManager):
     def _create_user(self, email, password, **extra_fields):
         if not email:
             raise ValueError("Email must be set")
@@ -37,9 +41,9 @@ class AfkatUserManger(UserManager):
 
 
 class User(AbstractUser):
-    username = models.CharField(_("Username") ,blank = True,unique = True, max_length=150,)
-    phone = PhoneNumberField(_("Phone Number"), blank=True,region =  None)
-    country = CountryField(blank_label = ("Select Country"), blank=True)
+    username = models.CharField(_("Username")  ,unique = True, max_length=150,)
+    email = models.EmailField(_("email address"), unique=True)
+
     ROLE_CHOICES = (
         ("admin",_("Administrator")),
         ("user",_("User")),
@@ -47,23 +51,39 @@ class User(AbstractUser):
         ("designer",_("Designer")),
     )
     role = models.CharField(_("Role"), choices = ROLE_CHOICES, default = 'user')
-    first_name = None
-    last_name = None
-    profile_image = models.ImageField(upload_to="profile_pics/", blank = True, null = True )
-    email = models.EmailField(_("email address"), unique=True)
-    objects = AfkatUserManger()
+    objects = AfkatUserManager()
 
     USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = []
+    REQUIRED_FIELDS = [ "username" ]
 
     def __str__(self):
         return self.email
-    @property
-    def is_developer(self):
-        return self.role == "developer"
-    @property
-    def is_designer(self):
-        return self.role == "designer"
-    @property
-    def is_admin(self):
-        return self.role == "admin"
+
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='userprofile')
+    phone = PhoneNumberField(_("Phone Number"), blank=True,null =  True, region=None)
+    country = CountryField(blank=True, null=True, blank_label="Select Country")
+    profile_image = models.ImageField(default = "default.jpg",upload_to="profile_pics/", blank=True, null=True)
+    github_link = models.URLField(blank=True, null=True)
+    linkedin_link = models.URLField(blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.user.email}'s profile"
+
+
+
+
+
+def create_or_update_user_profile(sender, instance, created, **kwargs):
+    if created:
+        Profile.objects.create(user=instance)
+    else:
+        if hasattr(instance, 'userprofile'):
+            instance.userprofile.save()
+        else:
+            Profile.objects.create(user=instance)
+# def save_user_profile(sender, instance, **kwargs):
+#     instance.profile.save()
+
+post_save.connect(create_or_update_user_profile , sender = User)
+# post_save.connect(save_user_profile , sender = Profile)

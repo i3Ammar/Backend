@@ -1,27 +1,26 @@
 from django.urls import include, path
-from django_registration.backends.activation.views import RegistrationView
-from django.urls import path
+from rest_framework.routers import DefaultRouter
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
-
-
-from .forms import UserRegistrationForm
-from .views import  profile
-
-from .views import CustomLoginView , CustomRegistrationView
+from .views import CustomLoginView  , ProfileViewSet
 
 
 
+router = DefaultRouter()
+router.register(r'profile' , ProfileViewSet , basename='profile')
 urlpatterns = [
 
-    # path ('accounts/', include ('django_registration.backends.one_step.urls')) ,
-    # path ('accounts/', include ('django_registration.backends.activation.urls')),
-    path('accounts/', include ('django.contrib.auth.urls')) ,
-    path ('accounts/profile/',profile , name = 'profile') ,
-    # path("accounts/register/", RegistrationView.as_view(form_class=UserRegistrationForm), name="django_registration_register",),
 
-    path('login/', CustomLoginView.as_view(), name='custom_login'),
-    path('register/', CustomRegistrationView.as_view(), name='custom_register'),
-    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('', include("rest_framework.urls")),
+    path('profile/', ProfileViewSet.as_view({'get': 'retrieve', 'patch': 'partial_update'}), name='profile'),
+    path('dra/', include('dj_rest_auth.urls')),
+    path('dra/reg/', include('dj_rest_auth.registration.urls')),
+
+    # path('accounts/', include ('django.contrib.auth.urls')) ,
+    # path('login/', CustomLoginView.as_view(), name='custom_login'),
+    # # path('logout/',LogoutView.as_view(), name='logout'),
+    # path('register/', CustomRegistrationView.as_view(), name='custom_register'),
+    # path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    # path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('', include(router.urls)) ,
 ]
