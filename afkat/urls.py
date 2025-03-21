@@ -14,30 +14,36 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
-from django.urls import path , include
+import debug_toolbar
 from django.conf import settings
 from django.conf.urls.static import static
-from django.views.generic import TemplateView
+from django.contrib import admin
+from django.urls import path, include
+from rest_framework import permissions
+from drf_yasg import openapi
+from drf_yasg.views import get_schema_view
 
 import afkat_home.views
-import debug_toolbar
 
 
-
-# schema_view = get_schema_view(
-#     openapi.Info(
-#         title="AFKAT API",
-#         default_version="v1",
-#         description="API for AFKAT",
-#     ),
-#     url="http://127.0.0.1:8000/api/v1/",
-#     public=True,
-# )
+schema_view = get_schema_view(
+    openapi.Info(
+        title = "My Api",
+        default_version='v1',
+        description = "My description",
+        terms_of_service = "https://www.google.com/policies/terms/",
+        contact=openapi.Contact(email="<EMAIL>"),
+        license=openapi.License(name="MIT License"),
+        url = 'http://127.0.0.1:8000/api/'
+    ),
+    public=True,
+    permission_classes = [ permissions.AllowAny],
+)
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('',afkat_home.views.index , name = "home"),
-    path ('', include ('afkat_auth.urls')),
+    path ('api/auth/', include ('afkat_auth.urls')),
+    path('api/home/',include('afkat_home.api.urls'))
 
 
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
@@ -45,6 +51,7 @@ urlpatterns = [
 
 if settings.DEBUG:
     urlpatterns += [
+    path("swagger/",schema_view.with_ui('swagger', cache_timeout = 0 ), name = 'schema-swagger-ui'),
     path('__debug__/', include(debug_toolbar.urls)),
     path("__reload__/", include("django_browser_reload.urls")),
     ]

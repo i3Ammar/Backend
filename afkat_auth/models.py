@@ -1,10 +1,8 @@
-from email.policy import default
 
 from django.db import models
 from django.contrib.auth.models import AbstractUser, UserManager
 from django.db.models.signals import post_save
 from django.utils.translation import gettext_lazy as _
-from django.db.models.signals import post_save
 
 from django_countries.serializer_fields import  CountryField
 from django_countries.fields import CountryField
@@ -53,7 +51,7 @@ class User(AbstractUser):
     role = models.CharField(_("Role"), choices = ROLE_CHOICES, default = 'user')
     objects = AfkatUserManager()
 
-    USERNAME_FIELD = "email"
+    USERNAME_FIELD  = "email"
     REQUIRED_FIELDS = [ "username" ]
 
     def __str__(self):

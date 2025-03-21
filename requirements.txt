@@ -1,7 +1,6 @@
 dj_database_url==2.3.0
 Django==5.1.4
 django_crispy_forms==2.3
-django_versatileimagefield==3.1
 djangorestframework_simplejwt==5.4.0
 pytz==2025.1
 drf-yasg==1.21.8

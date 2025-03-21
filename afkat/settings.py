@@ -61,8 +61,7 @@ THIRD_PARTY_APPS = [
     'crispy_bootstrap5',
     'django_countries',
     'phonenumber_field',
-    'drf_yasg'
-
+    'drf_yasg',
 ]
 INSTALLED_APPS = [
                      'django.contrib.admin',
@@ -193,6 +192,7 @@ DEBUG_TOOLBAR_CONFIG = {
     "SHOW_TEMPLATE_CONTEXT": True,
 }
 REST_FRAMEWORK = {
+    'EXCEPTION_HANDLER': 'rest_framework.views.exception_handler',
     'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.IsAuthenticated',),
     'DEFAULT_AUTHENTICATION_CLASSES': [
         # 'rest_framework.authentication.SessionAuthentication',
@@ -200,19 +200,34 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
         'dj_rest_auth.jwt_auth.JWTCookieAuthentication',
     ],
+    'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.AnonRateThrottle',
+        "rest_framework.throttling.UserRateThrottle",
+    ],
+    'DEFAULT_THROTTLE_RATES':{
+        'anon': '10/minute',
+        'user': '50/minute'
+    },
+    "DEFAULT_FILTER_BACKENDS": [
+                "django_filters.rest_framework.DjangoFilterBackend",
+                "rest_framework.filters.OrderingFilter",
+    ],
+    # "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    # "PAGE_SIZE": 100,
 }
 
 REST_AUTH = {
     'USE_JWT': True,
     'JWT_AUTH_COOKIE': 'afkat-auth',
     'JWT_AUTH_REFRESH_COOKIE': 'afkat-refresh-token',
+    "JWT_AUTH_HTTPONLY": False,  # Makes sure refresh token is sent
+
 
     'LOGIN_SERIALIZER': 'afkat_auth.serializers.UserLoginSerializer',
     'REGISTER_SERIALIZER': 'afkat_auth.serializers.CustomRegisterSerializer',
     'USER_DETAILS_SERIALIZER': 'afkat_auth.serializers.UserProfileSerializer',
 }
-# ACCOUNT_AUTHENTICATION_METHOD = "email"  # Use Email / Password authentication
-ACCOUNT_LOGIN_METHODS = {'email'}   #not depricated
+ACCOUNT_LOGIN_METHODS = {'email'}
 ACCOUNT_USERNAME_REQUIRED = True
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_EMAIL_VERIFICATION = "none"
@@ -268,3 +283,11 @@ CORS_ORIGIN_WHITELIST = (
 #     # allauth specific authentication methods, such as login by e-mail
 #     # 'allauth.account.auth_backends.AuthenticationBackend',
 # ]
+
+SWAGGER_SETTINGS = {
+    'SECURITY_DEFINITIONS': {
+        'Basic' : {
+            'type': 'basic',
+        }
+    }
+}

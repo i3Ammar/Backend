@@ -15,7 +15,6 @@
         <a class="navbar-brand" href="/">AFKAT Home</a>
         <div class="d-flex">
             {% if request.user.is_active %}
-                <a class="nav-link" href="{% url "profile" %}">Profile</a>
                 <form class = "logout" action ="logout/" method ="post">
                     {% csrf_token %}
                     <button class = "btn btn-danger" type = "submit">Logout</button>
