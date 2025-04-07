@@ -86,6 +86,9 @@ class UserProfileSerializer(UserDetailsSerializer):
         model = User
         fields = ["username", "email", "userprofile"]
         read_only_fields = ["email"]
+        extra_kwargs = {
+            "username" : {"required":False},
+        }
 
     @permission_classes(UserIsOwnerOrReadOnly)
     def update(self, instance, validated_data):

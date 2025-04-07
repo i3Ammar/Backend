@@ -18,7 +18,7 @@
 
 {% row "justify-content-center" %}
     {% col "col-md-6" %}
-        <form method="post" action="login/dra/login">
+        <form method="post" action="api/v1/auth/rest_auth/login">
         {% csrf_token %}
         {{ form|crispy }}
         <button type="submit" class="btn btn-primary">Log In</button>

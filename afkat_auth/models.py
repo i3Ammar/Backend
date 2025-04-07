@@ -61,7 +61,7 @@ class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='userprofile')
     phone = PhoneNumberField(_("Phone Number"), blank=True,null =  True, region=None)
     country = CountryField(blank=True, null=True, blank_label="Select Country")
-    profile_image = models.ImageField(default = "default.jpg",upload_to="profile_pics/", blank=True, null=True)
+    profile_image = models.ImageField(default = "profile_pics/default.jpg",upload_to="profile_pics/", blank=True, null=True)
     github_link = models.URLField(blank=True, null=True)
     linkedin_link = models.URLField(blank=True, null=True)
 

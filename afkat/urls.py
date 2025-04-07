@@ -42,8 +42,11 @@ schema_view = get_schema_view(
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('',afkat_home.views.index , name = "home"),
-    path ('api/auth/', include ('afkat_auth.urls')),
-    path('api/home/',include('afkat_home.api.urls'))
+    path('api/v1/', include([
+        path('auth/', include('afkat_auth.urls')),
+        path('home/', include('afkat_home.api.urls')),
+        path('game/' , include ('afkat_game.api.urls')),
+    ])),
 
 
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

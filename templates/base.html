@@ -15,12 +15,12 @@
         <a class="navbar-brand" href="/">AFKAT Home</a>
         <div class="d-flex">
             {% if request.user.is_active %}
-                <form class = "logout" action ="logout/" method ="post">
+                <form class = "logout" action ="api/v1/auth/rest_auth/logout/" method ="post">
                     {% csrf_token %}
                     <button class = "btn btn-danger" type = "submit">Logout</button>
                 </form>
             {% else %}
-                <a class="nav-link" href="login/">Log In</a>
+                <a class="nav-link" href="api/v1/auth/rest_auth/login">Log In</a>
 
             {% endif %}
         </div>

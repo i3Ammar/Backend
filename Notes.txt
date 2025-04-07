@@ -1,0 +1,15 @@
+const genres = [
+    "Action",
+    "Adventure",
+    "RPG",
+    "Strategy",
+    "Simulation",
+    "Sports",
+    "Puzzle",
+    "Racing",
+    "Fighting",
+    "Shooter",
+    "Horror",
+    "Card Game",
+    "Educational",
+  ];

@@ -14,6 +14,8 @@ from pathlib import Path
 
 import dj_database_url
 import environ
+from dotenv import load_dotenv
+
 
 env = environ.Env()
 environ.Env.read_env()
@@ -94,7 +96,7 @@ MIDDLEWARE = [
 # CSRF_USE_SESSIONS = False
 # CSRF_COOKIE_HTTPONLY = False
 CSRF_TRUSTED_ORIGINS = ['http://localhost:8000', 'http://127.0.0.1:8000',
-                        "https://ec62-2a01-9700-4200-4700-33de-9eba-4faa-1df2.ngrok-free.app"]
+                        "https://d7b1-2a01-9700-42c6-8800-b127-b48b-ee34-8ddc.ngrok-free.app"]
 # SESSION_COOKIE_SECURE = False
 
 ROOT_URLCONF = 'afkat.urls'
@@ -127,39 +129,32 @@ DATABASES = {
     # 'default': {
     #     'ENGINE': 'django.db.backends.sqlite3',
     #     'NAME': BASE_DIR / 'db.sqlite3',
-    # }
-    # 'default': {
-    #     'ENGINE' : 'django.db.backends.postgresql_psycopg2',
-    #     'NAME' : env("DB_NAME"),
-    #     'USER': env("DB_USER"),
-    #     'PASSWORD' : env("DB_PASSWORD"),
-    #     'HOST' : env("DB_HOST"),
-    #     'PORT' : env("DB_PORT"),
-    # }
-    'default': dj_database_url.config(
-        default = 'postgres://postgres:' + env("DB_PASSWORD") + '@localhost:5432/afkat',
-        conn_max_age = 600,
-        conn_health_checks = True,
-    )
+    # 'default': dj_database_url.config(
+    #     default = 'postgres://postgres:' + env("DB_PASSWORD") + '@localhost:5432/afkat',
+    #     conn_max_age = 600,
+    #     conn_health_checks = True,
+    # )
+    'default' : env.db(),
+
 }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
-AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
-]
+# AUTH_PASSWORD_VALIDATORS = [
+#     {
+#         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+#     },
+#     {
+#         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+#     },
+#     {
+#         'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+#     },
+#     {
+#         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+#     },
+# ]
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
@@ -195,7 +190,7 @@ REST_FRAMEWORK = {
     'EXCEPTION_HANDLER': 'rest_framework.views.exception_handler',
     'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.IsAuthenticated',),
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        # 'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
         # 'rest_framework.authentication.BaseAuthentication',
         'rest_framework_simplejwt.authentication.JWTAuthentication',
         'dj_rest_auth.jwt_auth.JWTCookieAuthentication',
