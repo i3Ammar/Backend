@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from afkat_game.models import Game, GameComments, GameRating
+from afkat_game.models import Game, GameComments, GameRating, Tags
 
 
 class GameCommentSerializer(serializers.ModelSerializer):
@@ -21,6 +21,11 @@ class GameRatingSerializer(serializers.ModelSerializer):
 class GameDetailSerializer (serializers.ModelSerializer):
     username = serializers.ReadOnlyField(source = 'user.username')
     user_rating = serializers.SerializerMethodField()
+    tags = serializers.SlugRelatedField(
+        many = True ,
+        slug_field = "value" ,
+        queryset = Tags.objects.all()
+    )
 
     class Meta :
         model = Game

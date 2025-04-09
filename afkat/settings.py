@@ -96,7 +96,7 @@ MIDDLEWARE = [
 # CSRF_USE_SESSIONS = False
 # CSRF_COOKIE_HTTPONLY = False
 CSRF_TRUSTED_ORIGINS = ['http://localhost:8000', 'http://127.0.0.1:8000',
-                        "https://d7b1-2a01-9700-42c6-8800-b127-b48b-ee34-8ddc.ngrok-free.app"]
+                        "https://49fe-2a01-9700-42c6-8800-b127-b48b-ee34-8ddc.ngrok-free.app"]
 # SESSION_COOKIE_SECURE = False
 
 ROOT_URLCONF = 'afkat.urls'
@@ -190,7 +190,7 @@ REST_FRAMEWORK = {
     'EXCEPTION_HANDLER': 'rest_framework.views.exception_handler',
     'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.IsAuthenticated',),
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.SessionAuthentication',
+        # 'rest_framework.authentication.SessionAuthentication',
         # 'rest_framework.authentication.BaseAuthentication',
         'rest_framework_simplejwt.authentication.JWTAuthentication',
         'dj_rest_auth.jwt_auth.JWTCookieAuthentication',
@@ -205,6 +205,7 @@ REST_FRAMEWORK = {
     },
     "DEFAULT_FILTER_BACKENDS": [
                 "django_filters.rest_framework.DjangoFilterBackend",
+                "rest_framework.filters.SearchFilter",
                 "rest_framework.filters.OrderingFilter",
     ],
     # "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",

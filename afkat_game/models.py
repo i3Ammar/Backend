@@ -31,6 +31,7 @@ class Asset(models.Model):
 
 
 class Game(models.Model):
+    tags = models.ManyToManyField(Tags, related_name = "games" )
     title = models.CharField(max_length=200, db_index=True)
     description = models.TextField()
     game_file = models.FileField(upload_to="games")
