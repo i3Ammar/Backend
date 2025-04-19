@@ -1,6 +1,6 @@
 from django.contrib import admin
 # Register your models here.
-from .models import Game, GameRating, GameComments
+from .models import Game, GameRating, GameComments, GameJam
 
 
 class GameAdmin(admin.ModelAdmin):
@@ -12,3 +12,4 @@ class GameAdmin(admin.ModelAdmin):
 admin.site.register(Game, GameAdmin)
 admin.site.register(GameRating)
 admin.site.register(GameComments)
+admin.site.register(GameJam)

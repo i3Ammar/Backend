@@ -18,7 +18,7 @@ Here are some additional features you can implement to enhance the user experien
 
 9. **Responsive Design**: Ensure the application is mobile-friendly and responsive.
 
-10. **Advanced Filtering**: Provide advanced filtering options for posts and games based on tags, ratings, and other criteria.
+[//]: # (10. **Advanced Filtering**: Provide advanced filtering options for posts and games based on tags, ratings, and other criteria.)
 
 11. **Gamejam Management**: Add features for creating, managing, and participating in gamejams, including submission deadlines and voting.
 

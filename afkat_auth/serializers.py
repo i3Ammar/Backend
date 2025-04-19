@@ -28,8 +28,9 @@ class CustomRegisterSerializer(RegisterSerializer):
         ],
     )
     email = serializers.EmailField(
-        validators=[UniqueValidator(queryset=User.objects.all())]
+        validators=[UniqueValidator(queryset=User.objects.all(), message=_("A user with this email already exists")),]
     )
+
     password1 = None
     password2 = None
 
@@ -44,9 +45,7 @@ class CustomRegisterSerializer(RegisterSerializer):
 
     def validate(self, attrs):
         if attrs["password"] != self.initial_data["confirm_password"]:
-            raise serializers.ValidationError(
-                _("The two password fields didn't match.")
-            )
+            raise serializers.ValidationError({"error":"The two password fields didn't match"})
         return attrs
 
     def get_cleaned_data(self):
@@ -80,11 +79,11 @@ class ProfileSerializer(CountryFieldMixin, serializers.ModelSerializer):
 
 
 class UserProfileSerializer(UserDetailsSerializer):
-    userprofile = ProfileSerializer()
+    userProfile = ProfileSerializer()
 
     class Meta:
         model = User
-        fields = ["username", "email", "userprofile"]
+        fields = ["username", "email", "userProfile"]
         read_only_fields = ["email"]
         extra_kwargs = {
             "username" : {"required":False},
@@ -92,12 +91,12 @@ class UserProfileSerializer(UserDetailsSerializer):
 
     @permission_classes(UserIsOwnerOrReadOnly)
     def update(self, instance, validated_data):
-        profile_data = validated_data.pop("userprofile", {})
+        profile_data = validated_data.pop("userProfile", {})
         instance = super().update(instance, validated_data)
 
-        if profile_data and hasattr(instance, "userprofile"):
+        if profile_data and hasattr(instance, "userProfile"):
             for attr, value in profile_data.items():
-                setattr(instance.userprofile, attr, value)
-            instance.userprofile.save()
+                setattr(instance.userProfile, attr, value)
+            instance.userProfile.save()
 
         return instance

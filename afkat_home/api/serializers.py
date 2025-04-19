@@ -1,10 +1,6 @@
 from rest_framework import serializers
-from rest_framework.decorators import permission_classes
-from rest_framework.permissions import IsAdminUser
 
 from afkat_auth.models import User
-from afkat_auth.permissions import UserIsOwnerOrReadOnly
-from afkat_auth.serializers import UserProfileSerializer
 from afkat_home.models import Comment, Post, Tag
 
 
@@ -46,6 +42,7 @@ class CommentSerializer(serializers.ModelSerializer):
 class PostSerializer(serializers.ModelSerializer):
     tags = TagField(slug_field="value", many=True, queryset=Tag.objects.all())
     author = AuthorSerializer(read_only=True)
+
 
     class Meta:
         model = Post

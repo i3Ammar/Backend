@@ -1,52 +1,97 @@
+from django.contrib.auth import get_user_model
+from django.utils import timezone
 from rest_framework import serializers
+from afkat_auth.serializers import UserProfileSerializer
+from afkat_game.models import Game, GameComments, GameRating, Tags, GameJam
 
-from afkat_game.models import Game, GameComments, GameRating, Tags
+from afkat_game.services.game_jam_service import join_game_jam, leave_game_jam
+from afkat_game.services.game_service import get_user_rating
+
+User = get_user_model()
 
 
 class GameCommentSerializer(serializers.ModelSerializer):
     username = serializers.ReadOnlyField(source = 'user.username')
+
     class Meta:
         model = GameComments
-        fields = ['id','game','user','username','content','created_at','updated_at']
-        read_only_fields = ['user','username', 'created_at', 'updated_at']
+        fields = ['id', 'game', 'user', 'username', 'content', 'created_at', 'updated_at']
+        read_only_fields = ['user', 'username', 'created_at', 'updated_at']
+
 
 class GameRatingSerializer(serializers.ModelSerializer):
     username = serializers.ReadOnlyField(source = 'user.username')
+    game = serializers.ReadOnlyField(source = 'game.title')
 
-    class Meta :
+    class Meta:
         model = GameRating
-        fields = ['id','game','user','username','rating','created_at']
-        read_only_fields = ['user','username','created_at']
+        fields = ['game', 'username', 'rating']
+        read_only_fields = ['user', 'username']
 
-class GameDetailSerializer (serializers.ModelSerializer):
-    username = serializers.ReadOnlyField(source = 'user.username')
+
+class GameDetailSerializer(serializers.ModelSerializer):
+    creator = serializers.ReadOnlyField(source = 'creator.username')
     user_rating = serializers.SerializerMethodField()
     tags = serializers.SlugRelatedField(
-        many = True ,
-        slug_field = "value" ,
+        many = True,
+        slug_field = "value",
         queryset = Tags.objects.all()
     )
 
-    class Meta :
+    class Meta:
         model = Game
-        fields =  "__all__"
-        read_only_field = ['download_count' ]
+        fields = ['id','title','description', 'creator', 'user_rating', 'tags', 'download_count', 'rating', 'game_file','thumbnail',]
+        read_only_field = ['download_count','created_at','updated_at']
         extra_kwargs = {
-            'rating':{'required':False}
+            'rating': {'required': False}
         }
 
-
-    def get_user_rating(self , obj ):
+    def get_user_rating(self, obj):
         request = self.context.get('request')
-        if request and request.user.is_authenticated :
-            try :
-                rating = GameRating.objects.get(game=obj ,user  = request.user)
-                return rating.rating
-            except GameRating.DoesNotExist:
-                return None
-        return None
+        return get_user_rating(obj, request.user)
 
 
 
+class GameJamSerializer(serializers.ModelSerializer):
+    created_by = serializers.ReadOnlyField(source = 'created_by.username')
+    is_active = serializers.ReadOnlyField()
+    participants_count = serializers.SerializerMethodField()
+    participants = serializers.SlugRelatedField(
+        many = True, read_only = True, slug_field = 'username'
+    )
+
+    class Meta:
+        model = GameJam
+        fields = [
+            'id', 'title', 'description', 'created_by',
+            'start_date', 'end_date', 'theme', 'prizes',
+            'participants', 'participants_count',
+            'is_active'
+        ]
+        read_only_fields = ["created_by"]
+
+    def get_participants_count(self, obj):
+        return obj.participants.count()
+
+    def create(self, validate_data):
+        validate_data['created_by'] = self.context['request'].user
+        return super().create(validate_data)
 
 
+class GameJamParticipationSerializer(serializers.Serializer):
+    action = serializers.ChoiceField(choices = ['join', 'leave'])
+
+    def validate(self, data):
+        if 'game_jam' not in self.context:
+            raise serializers.ValidationError("GameJam context missing")
+        return data
+
+    def save(self, **kwargs):
+        user = self.context['request'].user
+        game_jam = self.context['game_jam']
+        action = self.validated_data['action']
+
+        if action == 'join':
+            join_game_jam(user, game_jam)
+        elif action == 'leave':
+            leave_game_jam(user, game_jam)

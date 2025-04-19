@@ -12,10 +12,18 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from datetime import timedelta
 from pathlib import Path
 
-import dj_database_url
 import environ
-from dotenv import load_dotenv
+import sentry_sdk
 
+from sentry_sdk.integrations.django import DjangoIntegration
+sentry_sdk.init(
+    dsn="https://d8f1bd59fec9bf8736045bc9feae82c0@o4509159271301120.ingest.de.sentry.io/4509159313047632",
+    # Add data like request headers and IP for users,
+    # see https://docs.sentry.io/platforms/python/data-management/data-collected/ for more info
+    integrations=[DjangoIntegration()],
+    send_default_pii=True,
+    traces_sample_rate=1.0,
+)
 
 env = environ.Env()
 environ.Env.read_env()
@@ -43,7 +51,8 @@ LOGOUT_REDIRECT_URL = "home"
 LOCAL_APPS = [
     'afkat_home',
     'afkat_auth',
-    'afkat_game'
+    'afkat_game',
+    'afkat_art'
 ]
 THIRD_PARTY_APPS = [
     'rest_framework',
@@ -96,7 +105,7 @@ MIDDLEWARE = [
 # CSRF_USE_SESSIONS = False
 # CSRF_COOKIE_HTTPONLY = False
 CSRF_TRUSTED_ORIGINS = ['http://localhost:8000', 'http://127.0.0.1:8000',
-                        "https://49fe-2a01-9700-42c6-8800-b127-b48b-ee34-8ddc.ngrok-free.app"]
+                        "https://789c-2a01-9700-4201-300-189-e28-fad2-71b.ngrok-free.app"]
 # SESSION_COOKIE_SECURE = False
 
 ROOT_URLCONF = 'afkat.urls'
@@ -134,27 +143,29 @@ DATABASES = {
     #     conn_max_age = 600,
     #     conn_health_checks = True,
     # )
-    'default' : env.db(),
-
+    'default': {
+        **env.db(),
+        'CONN_MAX_AGE': 600,
+        'CONN_HEALTH_CHECKS': True,
+    }
 }
-
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
-# AUTH_PASSWORD_VALIDATORS = [
-#     {
-#         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-#     },
-#     {
-#         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-#     },
-#     {
-#         'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-#     },
-#     {
-#         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-#     },
-# ]
+AUTH_PASSWORD_VALIDATORS = [
+    {
+        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+    },
+]
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
@@ -176,6 +187,15 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Cache configuration
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake',
+        'TIMEOUT': 300,  # 5 minutes
+    }
+}
 
 DEBUG_TOOLBAR_CONFIG = {
     "DISABLE_PANELS": [
@@ -208,8 +228,8 @@ REST_FRAMEWORK = {
                 "rest_framework.filters.SearchFilter",
                 "rest_framework.filters.OrderingFilter",
     ],
-    # "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
-    # "PAGE_SIZE": 100,
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "PAGE_SIZE": 10,
 }
 
 REST_AUTH = {
@@ -223,13 +243,15 @@ REST_AUTH = {
     'REGISTER_SERIALIZER': 'afkat_auth.serializers.CustomRegisterSerializer',
     'USER_DETAILS_SERIALIZER': 'afkat_auth.serializers.UserProfileSerializer',
 }
+
 ACCOUNT_LOGIN_METHODS = {'email'}
+# ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_USERNAME_REQUIRED = True
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_EMAIL_VERIFICATION = "none"
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(days = 1),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes = 10),
     "REFRESH_TOKEN_LIFETIME": timedelta(days = 5),
 }
 
@@ -249,6 +271,7 @@ CORS_ALLOW_METHODS = [
     'PUT',
 ]
 CORS_ALLOW_HEADERS = [
+    'ngrok-skip-browser-warning',
     'accept',
     'accept-encoding',
     'authorization',
@@ -266,6 +289,7 @@ CORS_ALLOW_CREDENTIALS = True
 
 CORS_ORIGIN_WHITELIST = (
     'http://localhost:3000',  # for localhost (REACT Default)
+    'http://localhost:5173',  # for localhost (REACT Default)
     'http://192.168.0.50:3000',  # for network
     'http://localhost:8080',  # for localhost (Developlemt)
     'http://192.168.0.50:8080',  # for network (Development)
@@ -287,3 +311,7 @@ SWAGGER_SETTINGS = {
         }
     }
 }
+
+# Delete in deployment
+DATA_UPLOAD_MAX_MEMORY_SIZE =1 * 1024 * 1024 * 1024 # No limit (or set to e.g., 2 * 1024 * 1024 * 1024 for 2GB)
+FILE_UPLOAD_MAX_MEMORY_SIZE = 1 * 1024 * 1024 * 1024  # Also remove file size memory buffer limit

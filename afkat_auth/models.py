@@ -58,10 +58,10 @@ class User(AbstractUser):
         return self.email
 
 class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='userprofile')
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='userProfile')
     phone = PhoneNumberField(_("Phone Number"), blank=True,null =  True, region=None)
     country = CountryField(blank=True, null=True, blank_label="Select Country")
-    profile_image = models.ImageField(default = "profile_pics/default.jpg",upload_to="profile_pics/", blank=True, null=True)
+    profile_image = models.ImageField(default = "default_images/default_profile.jpg",upload_to="profile_pics/", blank=True, null=True)
     github_link = models.URLField(blank=True, null=True)
     linkedin_link = models.URLField(blank=True, null=True)
 
@@ -76,8 +76,8 @@ def create_or_update_user_profile(sender, instance, created, **kwargs):
     if created:
         Profile.objects.create(user=instance)
     else:
-        if hasattr(instance, 'userprofile'):
-            instance.userprofile.save()
+        if hasattr(instance, 'userProfile'):
+            instance.userProfile.save()
         else:
             Profile.objects.create(user=instance)
 # def save_user_profile(sender, instance, **kwargs):

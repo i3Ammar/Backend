@@ -18,43 +18,44 @@ import debug_toolbar
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
+from django.db.models.functions import NullIf
+from django.http import HttpResponse
 from django.urls import path, include
-from rest_framework import permissions
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
+from rest_framework import permissions
 
 import afkat_home.views
-
 
 schema_view = get_schema_view(
     openapi.Info(
         title = "My Api",
-        default_version='v1',
+        default_version = 'v1',
         description = "My description",
         terms_of_service = "https://www.google.com/policies/terms/",
-        contact=openapi.Contact(email="<EMAIL>"),
-        license=openapi.License(name="MIT License"),
+        contact = openapi.Contact(email = "<EMAIL>"),
+        license = openapi.License(name = "MIT License"),
         url = 'http://127.0.0.1:8000/api/'
     ),
-    public=True,
-    permission_classes = [ permissions.AllowAny],
+    public = True,
+    permission_classes = [permissions.AllowAny],
 )
+
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('',afkat_home.views.index , name = "home"),
-    path('api/v1/', include([
-        path('auth/', include('afkat_auth.urls')),
-        path('home/', include('afkat_home.api.urls')),
-        path('game/' , include ('afkat_game.api.urls')),
-    ])),
+                  path('admin/', admin.site.urls),
+                  path('', afkat_home.views.index, name = "home"),
+                  # path('sentry-debug/'),
+                  path('api/v1/', include([
+                      path('auth/', include('afkat_auth.urls')),
+                      path('home/', include('afkat_home.api.urls')),
+                      path('game/', include('afkat_game.api.urls')),
+                  ])),
 
-
-]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
+              ] + static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
 
 if settings.DEBUG:
     urlpatterns += [
-    path("swagger/",schema_view.with_ui('swagger', cache_timeout = 0 ), name = 'schema-swagger-ui'),
-    path('__debug__/', include(debug_toolbar.urls)),
-    path("__reload__/", include("django_browser_reload.urls")),
+        path("swagger/", schema_view.with_ui('swagger', cache_timeout = 0), name = 'schema-swagger-ui'),
+        path('__debug__/', include(debug_toolbar.urls)),
+        path("__reload__/", include("django_browser_reload.urls")),
     ]

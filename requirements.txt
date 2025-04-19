@@ -1,5 +1,5 @@
 dj_database_url==2.3.0
-Django==5.1.4
+Django==5.1.7
 django_crispy_forms==2.3
 djangorestframework_simplejwt==5.4.0
 pytz==2025.1
