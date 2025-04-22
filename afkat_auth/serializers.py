@@ -1,7 +1,9 @@
-from dj_rest_auth.registration.serializers import RegisterSerializer
+from dj_rest_auth.registration.serializers import RegisterSerializer , get_adapter , setup_user_email
 from dj_rest_auth.serializers import LoginSerializer, UserDetailsSerializer
+from django.core.exceptions import ValidationError as DjangoValidationError
 from django.contrib.auth.password_validation import validate_password
-from django.utils.translation import gettext_lazy as _
+from django.db import transaction
+from django.utils.translation import gettext_lazy as _, override
 from django_countries.serializers import CountryFieldMixin
 from rest_framework import serializers
 from rest_framework.decorators import permission_classes
@@ -54,15 +56,24 @@ class CustomRegisterSerializer(RegisterSerializer):
             "email": self.validated_data.get("email", ""),
             "password": self.validated_data.get("password", ""),
         }
+    def save(self, request):
+        with transaction.atomic():
+            adapter = get_adapter()
+            user = adapter.new_user(request)
+            self.cleaned_data = self.get_cleaned_data()
+            user = adapter.save_user(request, user, self, commit=False)
+            if "password" in self.cleaned_data:
+                try:
+                    adapter.clean_password(self.cleaned_data['password'], user=user)
+                except DjangoValidationError as exc:
+                    raise serializers.ValidationError(
+                        detail=serializers.as_serializer_error(exc)
+                    )
 
-    def create(self, validated_data):
-        user = User.objects.create(
-            email=validated_data["email"],
-            username=validated_data["username"],
-        )
-        user.set_password(validated_data["password"])
-        user.save()
-        return user
+            user.save()
+            self.custom_signup(request, user)
+            setup_user_email(request, user, [])
+            return user
 
 
 class ProfileSerializer(CountryFieldMixin, serializers.ModelSerializer):
@@ -100,3 +111,4 @@ class UserProfileSerializer(UserDetailsSerializer):
             instance.userProfile.save()
 
         return instance
+

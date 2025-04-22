@@ -1,12 +1,9 @@
-
-# Create your tests here.
 from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth import get_user_model
 User = get_user_model()
 from rest_framework.test import APIClient
 from rest_framework import status
-import json
 
 
 class AfkatAuthTests(TestCase):
@@ -22,7 +19,6 @@ class AfkatAuthTests(TestCase):
             'confirm_password': 'StrongPassword123!'
         }
 
-        # URLs
         self.register_url = reverse('rest_register')
         self.login_url = reverse('rest_login')
         self.user_details_url = reverse('rest_user_details')

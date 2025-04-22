@@ -1,6 +1,3 @@
-# Backend
-Django Backend
-- [x] nothing done so far
 # Django Integration Testing Guide
 
 ## What is Integration Testing?

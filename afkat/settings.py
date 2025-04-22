@@ -14,15 +14,15 @@ from pathlib import Path
 
 import environ
 import sentry_sdk
-
 from sentry_sdk.integrations.django import DjangoIntegration
+
 sentry_sdk.init(
-    dsn="https://d8f1bd59fec9bf8736045bc9feae82c0@o4509159271301120.ingest.de.sentry.io/4509159313047632",
+    dsn = "https://d8f1bd59fec9bf8736045bc9feae82c0@o4509159271301120.ingest.de.sentry.io/4509159313047632",
     # Add data like request headers and IP for users,
     # see https://docs.sentry.io/platforms/python/data-management/data-collected/ for more info
-    integrations=[DjangoIntegration()],
-    send_default_pii=True,
-    traces_sample_rate=1.0,
+    integrations = [DjangoIntegration()],
+    send_default_pii = True,
+    traces_sample_rate = 1.0,
 )
 
 env = environ.Env()
@@ -74,15 +74,16 @@ THIRD_PARTY_APPS = [
     'phonenumber_field',
     'drf_yasg',
 ]
+
 INSTALLED_APPS = [
-                     'django.contrib.admin',
-                     'django.contrib.auth',
-                     'django.contrib.contenttypes',
-                     'django.contrib.sessions',
-                     'django.contrib.messages',
-                     'django.contrib.staticfiles',
-                     'django.contrib.sites',
-                 ] + THIRD_PARTY_APPS + LOCAL_APPS
+    'django.contrib.admin',
+    'django.contrib.auth',
+     'django.contrib.contenttypes',
+     'django.contrib.sessions',
+     'django.contrib.messages',
+     'django.contrib.staticfiles',
+     'django.contrib.sites',
+] + THIRD_PARTY_APPS + LOCAL_APPS
 
 THIRD_PARTY_MIDDLEWARE = [
     'debug_toolbar.middleware.DebugToolbarMiddleware',
@@ -104,8 +105,7 @@ MIDDLEWARE = [
 # CSRF_COOKIE_SECURE = False  # Set to True in production
 # CSRF_USE_SESSIONS = False
 # CSRF_COOKIE_HTTPONLY = False
-CSRF_TRUSTED_ORIGINS = ['http://localhost:8000', 'http://127.0.0.1:8000',
-                        "https://789c-2a01-9700-4201-300-189-e28-fad2-71b.ngrok-free.app"]
+CSRF_TRUSTED_ORIGINS = ['http://localhost:8000', 'http://127.0.0.1:8000', "https://b0cc-2a01-9700-423f-b600-b8f7-3333-5081-b322.ngrok-free.app"]
 # SESSION_COOKIE_SECURE = False
 
 ROOT_URLCONF = 'afkat.urls'
@@ -219,17 +219,17 @@ REST_FRAMEWORK = {
         'rest_framework.throttling.AnonRateThrottle',
         "rest_framework.throttling.UserRateThrottle",
     ],
-    'DEFAULT_THROTTLE_RATES':{
+    'DEFAULT_THROTTLE_RATES': {
         'anon': '10/minute',
         'user': '50/minute'
     },
     "DEFAULT_FILTER_BACKENDS": [
-                "django_filters.rest_framework.DjangoFilterBackend",
-                "rest_framework.filters.SearchFilter",
-                "rest_framework.filters.OrderingFilter",
+        "django_filters.rest_framework.DjangoFilterBackend",
+        "rest_framework.filters.SearchFilter",
+        "rest_framework.filters.OrderingFilter",
     ],
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
-    "PAGE_SIZE": 10,
+    "PAGE_SIZE": 20,
 }
 
 REST_AUTH = {
@@ -237,7 +237,6 @@ REST_AUTH = {
     'JWT_AUTH_COOKIE': 'afkat-auth',
     'JWT_AUTH_REFRESH_COOKIE': 'afkat-refresh-token',
     "JWT_AUTH_HTTPONLY": False,  # Makes sure refresh token is sent
-
 
     'LOGIN_SERIALIZER': 'afkat_auth.serializers.UserLoginSerializer',
     'REGISTER_SERIALIZER': 'afkat_auth.serializers.CustomRegisterSerializer',
@@ -251,7 +250,7 @@ ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_EMAIL_VERIFICATION = "none"
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes = 10),
+    "ACCESS_TOKEN_LIFETIME": timedelta(days = 1),
     "REFRESH_TOKEN_LIFETIME": timedelta(days = 5),
 }
 
@@ -295,7 +294,6 @@ CORS_ORIGIN_WHITELIST = (
     'http://192.168.0.50:8080',  # for network (Development)
 )
 
-
 # AUTHENTICATION_BACKENDS = [
 #     # Needed to login by username in Django admin, regardless of allauth
 #     # 'django.contrib.auth.backends.ModelBackend',
@@ -306,12 +304,12 @@ CORS_ORIGIN_WHITELIST = (
 
 SWAGGER_SETTINGS = {
     'SECURITY_DEFINITIONS': {
-        'Basic' : {
+        'Basic': {
             'type': 'basic',
         }
     }
 }
 
 # Delete in deployment
-DATA_UPLOAD_MAX_MEMORY_SIZE =1 * 1024 * 1024 * 1024 # No limit (or set to e.g., 2 * 1024 * 1024 * 1024 for 2GB)
+DATA_UPLOAD_MAX_MEMORY_SIZE = 1 * 1024 * 1024 * 1024  # No limit (or set to e.g., 2 * 1024 * 1024 * 1024 for 2GB)
 FILE_UPLOAD_MAX_MEMORY_SIZE = 1 * 1024 * 1024 * 1024  # Also remove file size memory buffer limit

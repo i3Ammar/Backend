@@ -18,8 +18,6 @@ import debug_toolbar
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.db.models.functions import NullIf
-from django.http import HttpResponse
 from django.urls import path, include
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
