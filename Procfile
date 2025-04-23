@@ -1,0 +1,1 @@
+web: gunicorn afkat.wsgi --log-file -

@@ -35,3 +35,4 @@ These features can significantly improve the user experience and engagement on y
 
 
 [//]: # (fix later)
+fix slug  for searching 

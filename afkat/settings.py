@@ -11,11 +11,13 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 from datetime import timedelta
 from pathlib import Path
-
+from dotenv import load_dotenv
 import environ
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
-
+import django_heroku
+django_heroku.settings(locals())
+load_dotenv()
 sentry_sdk.init(
     dsn = "https://d8f1bd59fec9bf8736045bc9feae82c0@o4509159271301120.ingest.de.sentry.io/4509159313047632",
     # Add data like request headers and IP for users,
