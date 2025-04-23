@@ -16,16 +16,15 @@ import environ
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
 import django_heroku
-django_heroku.settings(locals())
 load_dotenv()
-sentry_sdk.init(
-    dsn = "https://d8f1bd59fec9bf8736045bc9feae82c0@o4509159271301120.ingest.de.sentry.io/4509159313047632",
-    # Add data like request headers and IP for users,
-    # see https://docs.sentry.io/platforms/python/data-management/data-collected/ for more info
-    integrations = [DjangoIntegration()],
-    send_default_pii = True,
-    traces_sample_rate = 1.0,
-)
+# sentry_sdk.init(
+#     dsn = "https://d8f1bd59fec9bf8736045bc9feae82c0@o4509159271301120.ingest.de.sentry.io/4509159313047632",
+#     # Add data like request headers and IP for users,
+#     # see https://docs.sentry.io/platforms/python/data-management/data-collected/ for more info
+#     integrations = [DjangoIntegration()],
+#     send_default_pii = True,
+#     traces_sample_rate = 1.0,
+# )
 
 env = environ.Env()
 environ.Env.read_env()
@@ -315,3 +314,5 @@ SWAGGER_SETTINGS = {
 # Delete in deployment
 DATA_UPLOAD_MAX_MEMORY_SIZE = 1 * 1024 * 1024 * 1024  # No limit (or set to e.g., 2 * 1024 * 1024 * 1024 for 2GB)
 FILE_UPLOAD_MAX_MEMORY_SIZE = 1 * 1024 * 1024 * 1024  # Also remove file size memory buffer limit
+
+django_heroku.settings(locals())
