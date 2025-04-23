@@ -23,12 +23,14 @@ from afkat_home.api.serializers import AuthorSerializer
 from .filters import GameFilter
 from ..services.game_service import validate_game_file, validate_cover_image
 
+from afkat_art.api.pagination import GameAndArtLayoutPagination
 
 class GameViewSet(viewsets.ModelViewSet):
     queryset = Game.objects.all().select_related('creator').prefetch_related('tags')
     serializer_class = GameDetailSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     parser_classes = [MultiPartParser, FormParser]
+    pagination_class = GameAndArtLayoutPagination
     filter_backends = [
         DjangoFilterBackend,
         filters.SearchFilter,
