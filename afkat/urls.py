@@ -46,8 +46,8 @@ urlpatterns = [
                   path('api/v1/', include([
                       path('auth/', include('afkat_auth.urls')),
                       path('home/', include('afkat_home.api.urls')),
-                      path('game/', include('afkat_game.api.urls')),
-                      path('art/', include('afkat_art.api.urls')),
+                      path('games/', include('afkat_game.api.urls')),
+                      path('', include('afkat_art.api.urls')),
                   ])),
 
               ] + static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
