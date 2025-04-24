@@ -74,6 +74,7 @@ THIRD_PARTY_APPS = [
     'django_countries',
     'phonenumber_field',
     'drf_yasg',
+    'storages',
 ]
 
 INSTALLED_APPS = [
@@ -106,12 +107,10 @@ MIDDLEWARE = [
 # CSRF_COOKIE_SECURE = False  # Set to True in production
 # CSRF_USE_SESSIONS = False
 # CSRF_COOKIE_HTTPONLY = False
-CSRF_TRUSTED_ORIGINS = ['http://localhost:8000', 'http://127.0.0.1:8000', "https://b0cc-2a01-9700-423f-b600-b8f7-3333-5081-b322.ngrok-free.app"]
+CSRF_TRUSTED_ORIGINS = ['http://localhost:8000', 'http://127.0.0.1:8000']
 # SESSION_COOKIE_SECURE = False
 
 ROOT_URLCONF = 'afkat.urls'
-MEDIA_ROOT = BASE_DIR / "media"
-MEDIA_URL = "/media/"
 
 TEMPLATES = [
     {
@@ -182,7 +181,6 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = 'static/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -249,6 +247,7 @@ ACCOUNT_LOGIN_METHODS = {'email'}
 ACCOUNT_USERNAME_REQUIRED = True
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_EMAIL_VERIFICATION = "none"
+ACCOUNT_LOGOUT_ON_GET = False
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(days = 1),
@@ -310,9 +309,30 @@ SWAGGER_SETTINGS = {
         }
     }
 }
+AWS_ACCESS_KEY_ID = 'AKIA4OXHJJDBQSRTT7UL'
+AWS_SECRET_ACCESS_KEY = '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'
+AWS_STORAGE_BUCKET_NAME = 'afkat-bucket'
+AWS_S3_REGION_NAME = 'eu-central-1'
+AWS_S3_CUSTOM_DOMAIN = 'afkat-bucket.s3.amazonaws.com'
+AWS_S3_FILE_OVERWRITE = False
 
-# Delete in deployment
-DATA_UPLOAD_MAX_MEMORY_SIZE = 1 * 1024 * 1024 * 1024  # No limit (or set to e.g., 2 * 1024 * 1024 * 1024 for 2GB)
-FILE_UPLOAD_MAX_MEMORY_SIZE = 1 * 1024 * 1024 * 1024  # Also remove file size memory buffer limit
+STORAGES = {
 
+    # Media file (image) management
+    "default": {
+        "BACKEND": "storages.backends.s3boto3.S3StaticStorage",
+    },
+
+    # CSS and JS file management
+    "staticfiles": {
+        "BACKEND": "storages.backends.s3boto3.S3StaticStorage",
+    },
+}
+
+MEDIA_ROOT = BASE_DIR / "media"
+MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/media/"
+STATIC_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/static/"
+
+DATA_UPLOAD_MAX_MEMORY_SIZE = 1 * 1024 * 1024 * 1024
+FILE_UPLOAD_MAX_MEMORY_SIZE = 1 * 1024 * 1024 * 1024
 django_heroku.settings(locals())
