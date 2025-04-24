@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
+import os
 from datetime import timedelta
 from pathlib import Path
 from dotenv import load_dotenv
@@ -309,11 +310,12 @@ SWAGGER_SETTINGS = {
         }
     }
 }
-AWS_ACCESS_KEY_ID = 'AKIA4OXHJJDBQSRTT7UL'
-AWS_SECRET_ACCESS_KEY = '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'
-AWS_STORAGE_BUCKET_NAME = 'afkat-bucket'
-AWS_S3_REGION_NAME = 'eu-central-1'
-AWS_S3_CUSTOM_DOMAIN = 'afkat-bucket.s3.amazonaws.com'
+AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
+AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME')
+AWS_S3_REGION_NAME = os.getenv('AWS_S3_REGION_NAME')
+AWS_S3_CUSTOM_DOMAIN = os.getenv('AWS_S3_CUSTOM_DOMAIN')
+
 AWS_S3_FILE_OVERWRITE = False
 AWS_DEFAULT_ACL = 'public-read'
 AWS_S3_OBJECT_PARAMETERS = {
