@@ -36,3 +36,39 @@ These features can significantly improve the user experience and engagement on y
 
 [//]: # (fix later)
 fix slug  for searching 
+1. Navigate to the S3 console and select the 'afkat-bucket'
+
+2. Click on the 'Permissions' tab
+
+3. Scroll down to the 'Bucket policy' section and click 'Edit'
+
+4. Review the existing bucket policy for any misconfigurations:
+   - Ensure that the 'Action' field contains valid S3 actions
+   - Check that the 'Resource' field correctly specifies the bucket and/or objects
+
+5. If you find any invalid actions or mismatched resources, correct them:
+   - For bucket-level actions, use: 'Resource': 'arn:aws:s3:::afkat-bucket'
+   - For object-level actions, use: 'Resource': 'arn:aws:s3:::afkat-bucket/*'
+
+6. Verify that the policy structure is correct:
+   - Ensure each statement has 'Effect', 'Action', and 'Resource' fields
+   - Check that the JSON formatting is valid
+
+7. If you don't have permissions to make these changes, contact your AWS Administrator
+
+8. After making necessary corrections, click 'Save changes'
+
+9. If the error persists, review the bucket's CORS configuration:
+   - Go to the 'Permissions' tab
+   - Scroll to the 'Cross-origin resource sharing (CORS)' section
+   - Click 'Edit' and ensure the CORS configuration is correctly set up for your use case
+
+10. If you're still encountering issues, check the bucket's Ownership controls:
+    - In the 'Permissions' tab, review the 'Object Ownership' settings
+    - Ensure it's set to 'Bucket owner preferred' as per the current configuration
+
+11. If the problem continues, consider reviewing and adjusting the bucket's Public Access settings:
+    - In the 'Permissions' tab, check the 'Block Public Access' settings
+    - Adjust these settings if necessary, keeping in mind security best practices
+
+12. If all else fails, contact AWS Support for further assistance, providing them with the specific error message and the steps you've taken
