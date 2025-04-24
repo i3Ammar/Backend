@@ -2,6 +2,7 @@ from django.utils import timezone
 from django.conf import settings
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+from afkat.storage_backends import PublicMediaStorage, PrivateMediaStorage
 
 
 class Tags(models.Model):

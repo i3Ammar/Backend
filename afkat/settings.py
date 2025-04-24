@@ -315,6 +315,17 @@ AWS_STORAGE_BUCKET_NAME = 'afkat-bucket'
 AWS_S3_REGION_NAME = 'eu-central-1'
 AWS_S3_CUSTOM_DOMAIN = 'afkat-bucket.s3.amazonaws.com'
 AWS_S3_FILE_OVERWRITE = False
+AWS_DEFAULT_ACL = None
+
+STATIC_LOCATION = 'static'
+STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{STATIC_LOCATION}/'
+STATICFILES_STORAGE = 'afkat.storage_backends.StaticStorage'
+# s3 public media settings
+PUBLIC_MEDIA_LOCATION = 'media'
+MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{PUBLIC_MEDIA_LOCATION}/'
+DEFAULT_FILE_STORAGE = 'afkat.storage_backends.PublicMediaStorage'
+
+# MEDIA_ROOT = BASE_DIR / "media"
 
 STORAGES = {
 
@@ -329,9 +340,6 @@ STORAGES = {
     },
 }
 
-MEDIA_ROOT = BASE_DIR / "media"
-MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/media/"
-STATIC_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/static/"
 
 DATA_UPLOAD_MAX_MEMORY_SIZE = 1 * 1024 * 1024 * 1024
 FILE_UPLOAD_MAX_MEMORY_SIZE = 1 * 1024 * 1024 * 1024
