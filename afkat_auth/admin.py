@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from afkat_auth.models import User, Profile
+from afkat_auth.models import User, Profile, Follow
 from django.utils.translation import gettext_lazy as _
 
 
@@ -38,4 +38,5 @@ class AfkatUserAdmin(UserAdmin):
 
 
 admin.site.register(User, AfkatUserAdmin)
-admin.site.register(Profile)
+admin.site.register(Profile  )
+admin.site.register(Follow)

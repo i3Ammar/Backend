@@ -237,10 +237,16 @@ REST_AUTH = {
     'JWT_AUTH_COOKIE': 'afkat-auth',
     'JWT_AUTH_REFRESH_COOKIE': 'afkat-refresh-token',
     "JWT_AUTH_HTTPONLY": False,  # Makes sure refresh token is sent
+    'JWT_TOKEN_CLAIMS_SERIALIZER': 'afkat_auth.serializers.CustomTokenObtainPairSerializer',
 
     'LOGIN_SERIALIZER': 'afkat_auth.serializers.UserLoginSerializer',
     'REGISTER_SERIALIZER': 'afkat_auth.serializers.CustomRegisterSerializer',
     'USER_DETAILS_SERIALIZER': 'afkat_auth.serializers.UserProfileSerializer',
+}
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(days = 1),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days = 5),
 }
 
 ACCOUNT_LOGIN_METHODS = {'email'}
@@ -249,11 +255,6 @@ ACCOUNT_USERNAME_REQUIRED = True
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_EMAIL_VERIFICATION = "none"
 ACCOUNT_LOGOUT_ON_GET = False
-
-SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(days = 1),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days = 5),
-}
 
 # CONN_MAX_AGE = 600
 # CONN_HEALTH_CHECKS = True

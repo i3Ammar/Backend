@@ -1,4 +1,4 @@
-
+from django.contrib.auth import get_user_model
 from django.db import models
 from django.contrib.auth.models import AbstractUser, UserManager
 from django.db.models.signals import post_save
@@ -7,7 +7,6 @@ from django.utils.translation import gettext_lazy as _
 from django_countries.serializer_fields import  CountryField
 from django_countries.fields import CountryField
 from phonenumber_field.modelfields import PhoneNumberField
-
 
 
 # Create your models here.
@@ -68,6 +67,13 @@ class Profile(models.Model):
     def __str__(self):
         return f"{self.user.email}'s profile"
 
+class Follow(models.Model):
+    follower = models.ForeignKey(User , related_name = 'following',  on_delete = models.CASCADE )
+    following = models.ForeignKey(User , related_name = "followers" , on_delete = models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add = True)
+
+    class Meta :
+        unique_together = ['follower','following']
 
 
 
