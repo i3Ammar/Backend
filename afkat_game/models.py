@@ -2,7 +2,6 @@ from django.utils import timezone
 from django.conf import settings
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-from afkat.storage_backends import PublicMediaStorage, PrivateMediaStorage
 
 
 class Tags(models.Model):
@@ -15,17 +14,20 @@ class Game(models.Model):
     tags = models.ManyToManyField(Tags, related_name = "games" )
     title = models.CharField(max_length=200, db_index=True)
     description = models.TextField()
-    game_file = models.FileField(upload_to="games")
-    thumbnail = models.ImageField(upload_to="games/thumbnails/", null=True, blank=True)
+    game_file = models.FileField(upload_to="games/", null= True , blank = True)
+    thumbnail = models.ImageField(upload_to="games/thumbnails/",default =  'default_images/default_game.jpg', null=True, blank=True)
     creator = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, db_index=True)
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
     updated_at = models.DateTimeField(auto_now=True)
     download_count = models.IntegerField(default=0 , validators = [MinValueValidator(0)], db_index=True)
     rating = models.FloatField(default = 0.0 , validators=[MinValueValidator(1.0), MaxValueValidator(5.0)], db_index=True)
+    webgl_index_path = models.CharField(max_length = 255, blank = True, null = True)
+
     #     dont forget to add (progress, achievements)
 
     class Meta:
         ordering = ["-created_at"]
+
 
     def __str__(self):
         return self.title

@@ -36,7 +36,7 @@ class CustomRegisterSerializer(RegisterSerializer):
         validators = [
             lambda value: None
             if " " not in value
-            else serializers.ValidationError("Username cannot contain spaces")
+            else serializers.ValidationError({ 'error':"Username cannot contain spaces" })
         ],
     )
     email = serializers.EmailField(

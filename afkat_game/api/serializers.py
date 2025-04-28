@@ -38,7 +38,7 @@ class GameDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Game
-        fields = ['id','title','description', 'creator', 'user_rating', 'tags', 'download_count', 'rating', 'game_file','thumbnail',]
+        fields = ['id','title','description', 'creator', 'user_rating', 'tags', 'download_count', 'rating', 'game_file','thumbnail','webgl_index_path',]
         read_only_field = ['download_count','created_at','updated_at']
         extra_kwargs = {
             'rating': {'required': False}
@@ -75,13 +75,12 @@ class GameJamSerializer(serializers.ModelSerializer):
         validate_data['created_by'] = self.context['request'].user
         return super().create(validate_data)
 
-
 class GameJamParticipationSerializer(serializers.Serializer):
     action = serializers.ChoiceField(choices = ['join', 'leave'])
 
     def validate(self, data):
         if 'game_jam' not in self.context:
-            raise serializers.ValidationError("GameJam context missing")
+            raise serializers.ValidationError({ "error": "GameJam context missing" })
         return data
 
     def save(self, **kwargs):

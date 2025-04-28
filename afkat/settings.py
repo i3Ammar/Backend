@@ -207,7 +207,6 @@ DEBUG_TOOLBAR_CONFIG = {
     "SHOW_TEMPLATE_CONTEXT": True,
 }
 REST_FRAMEWORK = {
-    'EXCEPTION_HANDLER': 'rest_framework.views.exception_handler',
     'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.IsAuthenticated',),
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.SessionAuthentication',
@@ -283,11 +282,14 @@ CORS_ALLOW_HEADERS = [
     'x-csrftoken',
     'x-requested-with',
     'access-control-allow-origin',
+    'content-disposition',
 ]
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 
+
+X_FRAME_OPTIONS = 'ALLOWALL'  # Or restrict to specific domains
 CORS_ORIGIN_WHITELIST = (
     'http://localhost:3000',  # for localhost (REACT Default)
     'http://localhost:5173',  # for localhost (REACT Default)
@@ -321,6 +323,15 @@ AWS_S3_FILE_OVERWRITE = False
 AWS_DEFAULT_ACL = 'public-read'
 AWS_S3_OBJECT_PARAMETERS = {
     'CacheControl': 'max-age=86400',
+}
+
+AWS_S3_CUSTOM_DOMAIN_MIME_TYPES = {
+    '.unityweb': 'application/octet-stream',
+    '.js': 'application/javascript',
+    '.wasm': 'application/wasm',
+    '.json': 'application/json',
+    '.data': 'application/octet-stream',
+    '.mem': 'application/octet-stream',
 }
 
 STATIC_LOCATION = 'static'

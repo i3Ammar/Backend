@@ -1,4 +1,6 @@
+from django.db.models import CharField
 from rest_framework import serializers
+from rest_framework.fields import ReadOnlyField
 
 from afkat_auth.models import User
 from afkat_home.models import Comment, Post, Tag
@@ -9,7 +11,7 @@ class TagField(serializers.SlugRelatedField):
         try:
             return self.get_queryset().get_or_create(value=data.lower())[0]
         except (TypeError, ValueError):
-            self.fail(f"Tag value {data} is invalid")
+            return self.fail(f"Tag value {data} is invalid")
 
 
 class TagSerializer(serializers.ModelSerializer):
@@ -26,6 +28,9 @@ class AuthorSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ["username", "profile_url"]
+        extra_kwargs = {
+            'username': { 'required':False}
+        }
 
 class CommentSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=True)
@@ -41,13 +46,16 @@ class CommentSerializer(serializers.ModelSerializer):
 
 class PostSerializer(serializers.ModelSerializer):
     tags = TagField(slug_field="value", many=True, queryset=Tag.objects.all())
-    author = AuthorSerializer(read_only=True)
+    # author = AuthorSerializer(read_only=True)
+    username = serializers.ReadOnlyField(source = 'author.username')
+    user_id = serializers.ReadOnlyField(source = 'author.id')
 
 
     class Meta:
         model = Post
-        fields = "__all__"
+        exclude = ["author"]
         read_only_fields = ["slug","modified_at", "created_at"]
+
 
 
 class PostDetailSerializer(PostSerializer):
