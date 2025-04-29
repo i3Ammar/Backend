@@ -1,4 +1,5 @@
 from django.core.files.storage import default_storage
+from django.db import transaction
 from django.http import FileResponse
 from django.utils import timezone
 from django.utils.decorators import method_decorator
@@ -10,6 +11,7 @@ from rest_framework.exceptions import PermissionDenied
 from rest_framework.generics import get_object_or_404
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
+
 
 from afkat_game.api.serializers import (
     GameCommentSerializer,
@@ -54,14 +56,12 @@ class GameViewSet(viewsets.ModelViewSet):
         validate_game_file(self, serializer.validated_data['game_file'])
         game = serializer.save(creator = self.request.user)
 
-        webgl_index_path = process_webgl_upload(
+        relative_path = process_webgl_upload(
             serializer.validated_data['game_file'],
             game.id
         )
 
-        # You might want to store the path to the index.html file
-        # This could be in a new field on your Game model
-        game.webgl_index_path = webgl_index_path
+        game.webgl_index_path = relative_path
         game.save(update_fields = ['webgl_index_path'])
 
     def perform_destroy(self, instance):
@@ -106,27 +106,6 @@ class GameViewSet(viewsets.ModelViewSet):
             game.game_file.open("rb"), as_attachment = True, filename = game.game_file.name
         )
         return response
-
-    @action(methods=["get"], detail=True, url_path="webgl")
-    def serve_webgl(self, request, pk=None):
-        """
-        Serve the WebGL build for embedding in an iframe
-        """
-        game = get_object_or_404(Game, pk=pk)
-
-        # Use the webgl_index_path if it exists
-        if hasattr(game, 'webgl_index_path') and game.webgl_index_path:
-            webgl_url = request.build_absolute_uri(default_storage.url(game.webgl_index_path))
-        else:
-            webgl_url = game.game_file.url if game.game_file else None
-
-        if not webgl_url:
-            return Response(
-                {"error": "No WebGL build available for this game"},
-                status=status.HTTP_404_NOT_FOUND
-            )
-
-        return Response({"webgl_url": webgl_url})
 
 
 class GameCommentViewSet(viewsets.ModelViewSet):

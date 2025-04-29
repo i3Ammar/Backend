@@ -42,7 +42,6 @@ def process_webgl_upload(archive_file, game_id):
     # Create a directory for this game's WebGL build
     webgl_dir = f"games/{game_id}/"
 
-    # Determine file type by extension
     file_name = archive_file.name.lower()
 
     if file_name.endswith('.zip'):
@@ -54,6 +53,8 @@ def process_webgl_upload(archive_file, game_id):
                     with z.open(file_info) as source, default_storage.open(extracted_path, 'wb') as target:
                         target.write(source.read())
 
+            # Return the full URL instead of just the path
+            return default_storage.url(webgl_dir + "index.html")
 
     elif file_name.endswith('.7z'):
         # Process 7z file
@@ -88,10 +89,13 @@ def process_webgl_upload(archive_file, game_id):
                     with open(os.path.join(root, file), 'rb') as source, default_storage.open(extracted_path, 'wb') as target:
                         target.write(source.read())
 
+            # Return the full URL instead of just the path
+            return default_storage.url(webgl_dir + "index.html")
+
     else:
         raise ValueError("Unsupported archive format. Only ZIP, and 7Z files are supported.")
 
-    return webgl_dir + "index.html"
+
     # elif file_name.endswith('.rar'):   #rar cor the  futur
     #     # Process RAR file
     #     try:

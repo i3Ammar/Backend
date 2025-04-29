@@ -39,7 +39,7 @@ class GameDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Game
         fields = ['id','title','description', 'creator', 'user_rating', 'tags', 'download_count', 'rating', 'game_file','thumbnail','webgl_index_path',]
-        read_only_field = ['download_count','created_at','updated_at']
+        read_only_fields = ['creator','download_count','created_at','updated_at','webgl_index_path']
         extra_kwargs = {
             'rating': {'required': False}
         }
@@ -47,6 +47,10 @@ class GameDetailSerializer(serializers.ModelSerializer):
     def get_user_rating(self, obj):
         request = self.context.get('request')
         return get_user_rating(obj, request.user)
+
+    def create(self, validated_data):
+        validated_data['creator'] = self.context['request'].user
+        return super().create(validated_data)
 
 
 

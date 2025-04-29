@@ -57,7 +57,8 @@ class GameRating(models.Model):
     rating = models.PositiveSmallIntegerField(
         validators=[MinValueValidator(1), MaxValueValidator(5)],
         help_text="Rating from 1 to 5",
-        db_index=True
+        db_index=True,
+        default = 1
     )
     class Meta:
         unique_together = ["game", "user"]
