@@ -1,3 +1,4 @@
+from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.http import Http404
 from django.shortcuts import get_object_or_404
@@ -99,9 +100,14 @@ class UserFollowersView(generics.ListAPIView):
 
     def get_queryset(self):
         user_id = self.kwargs.get('pk')
+
+        if not self.request or not hasattr(self.request, 'parser_context'):
+            return User.objects.none()
+
         user = get_object_or_404(User, pk=user_id)
         followers = User.objects.filter(following__following=user)
         return followers
+
 
 class UserFollowingView(generics.ListAPIView):
     serializer_class = UserProfileSerializer
@@ -109,6 +115,10 @@ class UserFollowingView(generics.ListAPIView):
 
     def get_queryset(self):
         user_id = self.kwargs.get('pk')
-        user = get_object_or_404(User, pk=user_id)
-        following = User.objects.filter(followers__follower=user)
+
+        if not self.request or not hasattr(self.request, 'parser_context'):
+            return User.objects.none()
+
+        user = get_object_or_404(User, pk = user_id)
+        following = User.objects.filter(followers__follower = user)
         return following

@@ -191,11 +191,16 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Cache configuration
 CACHES = {
     'default': {
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-        'LOCATION': 'unique-snowflake',
-        'TIMEOUT': 300,  # 5 minutes
+        'BACKEND': 'django_redis.cache.RedisCache',
+        "LOCATION":os.environ.get('REDIS_URL' , 'redis://127.0.0.1:6379/0'),
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
     }
 }
+SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
+SESSION_CACHE_ALIAS = 'default'
+CELERY_BROKER_URL = os.environ.get('REDIS_URL', 'redis://localhost:6379/0')
 
 DEBUG_TOOLBAR_CONFIG = {
     "DISABLE_PANELS": [
@@ -209,7 +214,7 @@ DEBUG_TOOLBAR_CONFIG = {
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.IsAuthenticated',),
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.SessionAuthentication',
+        # 'rest_framework.authentication.SessionAuthentication',
         # 'rest_framework.authentication.BaseAuthentication',
         'rest_framework_simplejwt.authentication.JWTAuthentication',
         'dj_rest_auth.jwt_auth.JWTCookieAuthentication',
@@ -235,7 +240,7 @@ REST_AUTH = {
     'USE_JWT': True,
     'JWT_AUTH_COOKIE': 'afkat-auth',
     'JWT_AUTH_REFRESH_COOKIE': 'afkat-refresh-token',
-    "JWT_AUTH_HTTPONLY": False,  # Makes sure refresh token is sent
+    "JWT_AUTH_HTTPONLY": False,
     'JWT_TOKEN_CLAIMS_SERIALIZER': 'afkat_auth.serializers.CustomTokenObtainPairSerializer',
 
     'LOGIN_SERIALIZER': 'afkat_auth.serializers.UserLoginSerializer',

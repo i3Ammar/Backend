@@ -45,7 +45,7 @@ class CommentSerializer(serializers.ModelSerializer):
 
 
 class PostSerializer(serializers.ModelSerializer):
-    tags = TagField(slug_field="value", many=True, queryset=Tag.objects.all())
+    # tags = TagField(slug_field="value", many=True, queryset=Tag.objects.all())
     # author = AuthorSerializer(read_only=True)
     username = serializers.ReadOnlyField(source = 'author.username')
     user_id = serializers.ReadOnlyField(source = 'author.id')
@@ -53,7 +53,7 @@ class PostSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Post
-        exclude = ["author"]
+        exclude = ["author","tags"]
         read_only_fields = ["slug","modified_at", "created_at"]
 
 

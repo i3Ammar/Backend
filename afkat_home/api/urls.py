@@ -1,10 +1,10 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from afkat_home.api.views import TagViewSet, PostViewSet
+from afkat_home.api.views import PostViewSet
 
 
 router = DefaultRouter()
-router.register("tags", TagViewSet)
+# router.register("tags", TagViewSet)
 router.register(
     "posts", PostViewSet
 )

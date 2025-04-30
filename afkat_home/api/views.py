@@ -22,24 +22,24 @@ from afkat_home.api.serializers import (
 from afkat_home.models import Tag, Post
 
 
-class TagViewSet(viewsets.ModelViewSet):
-    queryset = Tag.objects.all()
-    serializer_class = TagSerializer
+# class TagViewSet(viewsets.ModelViewSet):
+#     queryset = Tag.objects.all()
+#     serializer_class = TagSerializer
 
-    @action(methods=["get"], detail=True, name="Posts with this Tag")
-    def posts(self, request, pk=None):
-        tag = self.get_object()
-        page = self.paginate_queryset(tag.posts)
-
-        if page is not None:
-            post_serializer = PostSerializer(
-                page, many=True, context={"request": request}
-            )
-            return self.get_paginated_response(post_serializer.data)
-        post_serializer = PostSerializer(
-            tag.posts, many=True, context={"request": request}
-        )
-        return Response(post_serializer.data)
+    # @action(methods=["get"], detail=True, name="Posts with this Tag")
+    # def posts(self, request, pk=None):
+    #     tag = self.get_object()
+    #     page = self.paginate_queryset(tag.posts)
+    #
+    #     if page is not None:
+    #         post_serializer = PostSerializer(
+    #             page, many=True, context={"request": request}
+    #         )
+    #         return self.get_paginated_response(post_serializer.data)
+    #     post_serializer = PostSerializer(
+    #         tag.posts, many=True, context={"request": request}
+    #     )
+    #     return Response(post_serializer.data)
 
 
 class PostViewSet(viewsets.ModelViewSet):
