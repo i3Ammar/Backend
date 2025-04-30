@@ -192,7 +192,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CACHES = {
     'default': {
         'BACKEND': 'django_redis.cache.RedisCache',
-        "LOCATION":os.environ.get('REDIS_URL' , 'redis://127.0.0.1:6379/0'),
+        "LOCATION":os.environ.get('REDISCLOUD_URL' , 'redis://127.0.0.1:6379/0'),
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }
@@ -200,7 +200,7 @@ CACHES = {
 }
 SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
 SESSION_CACHE_ALIAS = 'default'
-CELERY_BROKER_URL = os.environ.get('REDIS_URL', 'redis://localhost:6379/0')
+CELERY_BROKER_URL = os.environ.get('REDISCLOUD_URL', 'redis://localhost:6379/0')
 
 DEBUG_TOOLBAR_CONFIG = {
     "DISABLE_PANELS": [
