@@ -39,6 +39,10 @@ class Post(models.Model):
     image = models.ImageField(upload_to="post_images/", null=True, blank=True)
     tags = models.ManyToManyField(Tag, related_name="posts")
     comments = GenericRelation(Comment)
+
+    class Meta:
+        ordering = ["-published_at"]
+
     def __str__(self):
         return self.title
 

@@ -49,6 +49,7 @@ class PostSerializer(serializers.ModelSerializer):
     # author = AuthorSerializer(read_only=True)
     username = serializers.ReadOnlyField(source = 'author.username')
     user_id = serializers.ReadOnlyField(source = 'author.id')
+    user_profile_image = serializers.URLField(source='author.userProfile.profile_image.url', read_only=True)
 
 
     class Meta:
