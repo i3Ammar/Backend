@@ -14,7 +14,7 @@ class Game(models.Model):
     tags = models.ManyToManyField(Tags, related_name = "games" )
     title = models.CharField(max_length=200, db_index=True)
     description = models.TextField()
-    game_file = models.FileField(upload_to="games/", null= True , blank = True)
+    game_file = models.FileField(upload_to="games/", null= True , blank = True , )
     thumbnail = models.ImageField(upload_to="games/thumbnails/",default =  'default_images/default_game.jpg', null=True, blank=True)
     creator = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, db_index=True)
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)

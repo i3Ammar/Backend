@@ -49,13 +49,17 @@ class PostSerializer(serializers.ModelSerializer):
     # author = AuthorSerializer(read_only=True)
     username = serializers.ReadOnlyField(source = 'author.username')
     user_id = serializers.ReadOnlyField(source = 'author.id')
-    user_profile_image = serializers.URLField(source='author.userProfile.profile_image.url', read_only=True)
+    user_profile_image = serializers.URLField(source='author.userProfile.profile_image.url',read_only = True)
 
 
     class Meta:
         model = Post
         exclude = ["author","tags"]
         read_only_fields = ["slug","modified_at", "created_at"]
+
+    def create(self, validated_data):
+        validated_data['author'] = self.context['request'].user
+        return super().create(validated_data)
 
 
 

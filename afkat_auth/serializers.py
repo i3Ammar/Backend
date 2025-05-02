@@ -36,7 +36,7 @@ class CustomRegisterSerializer(RegisterSerializer):
         validators = [
             lambda value: None
             if " " not in value
-            else serializers.ValidationError({ 'error':"Username cannot contain spaces" })
+            else serializers.ValidationError({'error': "Username cannot contain spaces"})
         ],
     )
     email = serializers.EmailField(
@@ -109,7 +109,7 @@ class UserProfileSerializer(UserDetailsSerializer):
 
     class Meta:
         model = User
-        fields = ["username", "email", "userProfile", "followers_count", "following_count", "is_following"]
+        fields = ['id', "username", "email", "userProfile", "followers_count", "following_count", "is_following"]
         read_only_fields = ["email", "followers_count", "following_count", "is_following"]
         extra_kwargs = {
             "username": {"required": False},
@@ -136,7 +136,7 @@ class UserProfileSerializer(UserDetailsSerializer):
     def get_is_following(self, obj):
         request = self.context.get('request')
         if request and request.user.is_authenticated:
-            return Follow.objects.filter(follower = request.user , following = obj).exists()
+            return Follow.objects.filter(follower = request.user, following = obj).exists()
         return False
 
 

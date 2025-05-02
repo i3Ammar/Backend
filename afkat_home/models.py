@@ -38,6 +38,7 @@ class Post(models.Model):
     content = models.TextField()
     image = models.ImageField(upload_to="post_images/", null=True, blank=True)
     tags = models.ManyToManyField(Tag, related_name="posts")
+    theme = models.CharField(max_length=100, null=True, blank=True)
     comments = GenericRelation(Comment)
 
     class Meta:

@@ -20,6 +20,7 @@ from afkat_home.api.serializers import (
     PostDetailSerializer,
 )
 from afkat_home.models import Tag, Post
+from afkat_home.utils import get_available_themes
 
 
 # class TagViewSet(viewsets.ModelViewSet):
@@ -44,7 +45,7 @@ from afkat_home.models import Tag, Post
 
 class PostViewSet(viewsets.ModelViewSet):
     permission_classes = [UserIsOwnerOrReadOnly | IsAdminUser]
-    queryset = Post.objects.all()
+    queryset = Post.objects.all().prefetch_related('comments__creator','comments')
     filterset_class = PostFilterSet
     ordering_fields = ["published_at", "author", "title", "slug"]
 
@@ -108,4 +109,8 @@ class PostViewSet(viewsets.ModelViewSet):
         serializer = PostSerializer(posts, many=True, context={"request": request})
         return Response(serializer.data)
 
+    @action(methods=["get"], detail=False, )
+    def themes(self, request):
+        themes = get_available_themes()
+        return Response(themes)
 
