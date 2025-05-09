@@ -41,7 +41,7 @@ class GameDetailSerializer(serializers.ModelSerializer):
         fields = ['id','title','description', 'creator', 'user_rating', 'tags', 'download_count', 'rating', 'game_file','thumbnail','webgl_index_path',]
         read_only_fields = ['creator','download_count','created_at','updated_at','webgl_index_path']
         extra_kwargs = {
-            'rating': {'required': False}
+            'rating': {'required': False},
         }
 
     def get_user_rating(self, obj):

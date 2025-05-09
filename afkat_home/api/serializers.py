@@ -3,7 +3,7 @@ from rest_framework import serializers
 from rest_framework.fields import ReadOnlyField
 
 from afkat_auth.models import User
-from afkat_home.models import Comment, Post, Tag
+from afkat_home.models import Comment, Post
 
 
 class TagField(serializers.SlugRelatedField):
@@ -14,10 +14,6 @@ class TagField(serializers.SlugRelatedField):
             return self.fail(f"Tag value {data} is invalid")
 
 
-class TagSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Tag
-        fields = "__all__"
 
 
 class AuthorSerializer(serializers.ModelSerializer):
@@ -45,7 +41,6 @@ class CommentSerializer(serializers.ModelSerializer):
 
 
 class PostSerializer(serializers.ModelSerializer):
-    # tags = TagField(slug_field="value", many=True, queryset=Tag.objects.all())
     # author = AuthorSerializer(read_only=True)
     username = serializers.ReadOnlyField(source = 'author.username')
     user_id = serializers.ReadOnlyField(source = 'author.id')
@@ -54,7 +49,7 @@ class PostSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Post
-        exclude = ["author","tags"]
+        exclude = ["author"]
         read_only_fields = ["slug","modified_at", "created_at"]
 
     def create(self, validated_data):

@@ -13,18 +13,21 @@ def get_user_rating(game, user):
     return None
 
 def validate_cover_image(self , value):
-    if value.size > 5*1024*1024:
-        raise serializers.ValidationError({ 'error':'Image too large' })
+    if value:
+        if value.size > 5*1024*1024:
+            raise serializers.ValidationError({ 'error':'Image too large' })
 
-    valid_extensions = ['jpg', 'jpeg', 'webp', 'png']
-    ext = value.name.split('.')[-1].lower()
-    if ext not in valid_extensions:
-        raise serializers.ValidationError({ 'error':f'Unsupported file extension. Use: {", ".join(valid_extensions)}' })
+        valid_extensions = ['jpg', 'jpeg', 'webp', 'png']
+        ext = value.name.split('.')[-1].lower()
+        if ext not in valid_extensions:
+            raise serializers.ValidationError({ 'error':f'Unsupported file extension. Use: {", ".join(valid_extensions)}' })
+    else :
+        raise serializers.ValidationError({'error':'thumbnail is required' })
 
 def validate_game_file(self , value):
     if value.size > 1024*1024*1024:
         raise serializers.ValidationError({ 'error':'Game file too large' })
-    valid_extensions = ['zip', 'rar','7z']
+    valid_extensions = ['zip','7z']
     ext = value.name.split('.')[-1].lower()
     if ext not in valid_extensions:
         raise serializers.ValidationError({ 'error':f'Unsupported file extension.  Use: {', '.join(valid_extensions)}' })

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from afkat_home.models import Tag, Post, Comment
+from afkat_home.models import  Post, Comment
 
 
 # Register your models here.
@@ -11,6 +11,5 @@ class PostAdmin(admin.ModelAdmin):
     readonly_fields = ("created_at", "modified_at")
 
 
-admin.site.register(Tag)
 admin.site.register(Comment)
 admin.site.register(Post, PostAdmin)

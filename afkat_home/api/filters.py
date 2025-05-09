@@ -27,4 +27,4 @@ class PostFilterSet(filters.FilterSet):
 
     class Meta:
         model = Post
-        fields = ["author", "tags"]
+        fields = ["author"]

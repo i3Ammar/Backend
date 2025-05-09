@@ -16,36 +16,14 @@ from afkat_auth.permissions import UserIsOwnerOrReadOnly
 from afkat_home.api.filters import PostFilterSet
 from afkat_home.api.serializers import (
     PostSerializer,
-    TagSerializer,
     PostDetailSerializer,
 )
-from afkat_home.models import Tag, Post
+from afkat_home.models import Post
 from afkat_home.utils import get_available_themes
-
-
-# class TagViewSet(viewsets.ModelViewSet):
-#     queryset = Tag.objects.all()
-#     serializer_class = TagSerializer
-
-    # @action(methods=["get"], detail=True, name="Posts with this Tag")
-    # def posts(self, request, pk=None):
-    #     tag = self.get_object()
-    #     page = self.paginate_queryset(tag.posts)
-    #
-    #     if page is not None:
-    #         post_serializer = PostSerializer(
-    #             page, many=True, context={"request": request}
-    #         )
-    #         return self.get_paginated_response(post_serializer.data)
-    #     post_serializer = PostSerializer(
-    #         tag.posts, many=True, context={"request": request}
-    #     )
-    #     return Response(post_serializer.data)
-
 
 class PostViewSet(viewsets.ModelViewSet):
     permission_classes = [UserIsOwnerOrReadOnly | IsAdminUser]
-    queryset = Post.objects.all().prefetch_related('comments__creator','comments')
+    queryset = Post.objects.all()
     filterset_class = PostFilterSet
     ordering_fields = ["published_at", "author", "title", "slug"]
 
@@ -55,32 +33,16 @@ class PostViewSet(viewsets.ModelViewSet):
 
         elif not self.request.user.is_staff:
             queryset = self.queryset
-        # filter for own or
         else:
             queryset = self.queryset.filter(
                 Q(published_at__lte=timezone.now()) | Q(author=self.request.user)
             )
 
-        time_period_name = self.kwargs.get("period_name")
-        if not time_period_name:
-            # no  further filtering required
-            return queryset
+        user_pk = self.kwargs.get('pk')
+        if user_pk is not None:
+            queryset = self.queryset.filter(author__pk=user_pk)
 
-        if time_period_name == "new":
-            return queryset.filter(
-                published_at__gte=timezone.now() - timedelta(hours=1)
-            )
-        elif time_period_name == "today":
-            return queryset.filter(
-                published_at__date=timezone.now().date(),
-            )
-        elif time_period_name == "week":
-            return queryset.filter(published_at__gte=timezone.now() - timedelta(days=7))
-        else:
-            raise Http404(
-                f"Time period {time_period_name} is not valid , should be"
-                f"'new', 'today' or 'week ' ",
-            )
+        return queryset
 
     @method_decorator(vary_on_headers("Authorization", "Cookie"))
     @method_decorator(cache_page(2 * 60))

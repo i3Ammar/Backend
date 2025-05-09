@@ -51,6 +51,7 @@ class GameViewSet(viewsets.ModelViewSet):
     def retrieve(self, request, *args, **kwargs):
         return super().retrieve(request, *args, **kwargs)
 
+    @transaction.atomic
     def perform_create(self, serializer):
         validate_cover_image(self , serializer.validated_data['thumbnail'])
         validate_game_file(self, serializer.validated_data['game_file'])
@@ -174,17 +175,13 @@ class GameJamViewSet(viewsets.ModelViewSet):
         )
 
         if serializer.is_valid():
+            serializer.save()  # This will call the service functions
             action = serializer.validated_data['action']
-
-            if action == 'join':
-                game_jam.participants.add(request.user)
-                return Response({'status': 'joined game jam'})
-            elif action == 'leave':
-                game_jam.participants.remove(request.user)
-                return Response({'status': 'left game jam'})
+            return Response({'status': f'{action}ed game jam'})
 
         return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
 
+    @method_decorator(cache_page(60 * 10))
     @action(detail = True, methods = ['get'])
     def participants(self, request, pk = None):
         game_jam = self.get_object()

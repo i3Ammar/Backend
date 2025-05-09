@@ -7,14 +7,6 @@ from django.db import models
 
 # Create your models here.
 
-
-class Tag(models.Model):
-    value = models.TextField(max_length=100, unique=True)
-
-    def __str__(self):
-        return self.value
-
-
 class Comment(models.Model):
     creator = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     content = models.TextField(max_length=1000)
@@ -37,7 +29,6 @@ class Post(models.Model):
     summary = models.TextField(max_length=500, null=True)
     content = models.TextField()
     image = models.ImageField(upload_to="post_images/", null=True, blank=True)
-    tags = models.ManyToManyField(Tag, related_name="posts")
     theme = models.CharField(max_length=100, null=True, blank=True)
     comments = GenericRelation(Comment)
 
