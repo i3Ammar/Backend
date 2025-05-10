@@ -1,20 +1,8 @@
-from django.db.models import CharField
 from rest_framework import serializers
-from rest_framework.fields import ReadOnlyField
 
+from afkat.utils.serializer_field import CompressedImageField
 from afkat_auth.models import User
 from afkat_home.models import Comment, Post
-
-
-class TagField(serializers.SlugRelatedField):
-    def to_internal_value(self, data):
-        try:
-            return self.get_queryset().get_or_create(value=data.lower())[0]
-        except (TypeError, ValueError):
-            return self.fail(f"Tag value {data} is invalid")
-
-
-
 
 class AuthorSerializer(serializers.ModelSerializer):
     profile_url = serializers.HyperlinkedIdentityField(
@@ -47,6 +35,12 @@ class PostSerializer(serializers.ModelSerializer):
     user_profile_image = serializers.URLField(source='author.userProfile.profile_image.url',read_only = True)
 
 
+    image = CompressedImageField(
+        max_size=1200,
+        quality=80,
+        maintain_format=True,
+        max_file_size_kb=500
+    )
     class Meta:
         model = Post
         exclude = ["author"]

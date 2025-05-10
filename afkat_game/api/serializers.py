@@ -1,5 +1,7 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
+
+from afkat.utils.serializer_field import CompressedImageField
 from afkat_game.models import Game, GameComments, GameRating, Tags, GameJam
 
 from afkat_game.services.game_jam_service import join_game_jam, leave_game_jam
@@ -34,6 +36,13 @@ class GameDetailSerializer(serializers.ModelSerializer):
         many = True,
         slug_field = "value",
         queryset = Tags.objects.all()
+    )
+
+    thumbnail = CompressedImageField(
+        max_size=1200,
+        quality=80,
+        maintain_format=True,
+        max_file_size_kb=500
     )
 
     class Meta:

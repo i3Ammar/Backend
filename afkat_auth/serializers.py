@@ -11,6 +11,7 @@ from rest_framework.validators import UniqueValidator
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.tokens import Token
 
+from afkat.utils.serializer_field import CompressedImageField
 from afkat_auth.permissions import UserIsOwnerOrReadOnly
 from .models import User, Profile, Follow
 
@@ -89,6 +90,13 @@ class CustomRegisterSerializer(RegisterSerializer):
 
 
 class ProfileSerializer(CountryFieldMixin, serializers.ModelSerializer):
+
+    profile_image = CompressedImageField(
+        max_size=1200,
+        quality=80,
+        maintain_format=True,
+        max_file_size_kb=500
+    )
     class Meta:
         model = Profile
         fields = ["phone", "country", "profile_image", "github_link", "linkedin_link"]

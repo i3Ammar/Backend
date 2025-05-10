@@ -31,6 +31,7 @@ class Post(models.Model):
     image = models.ImageField(upload_to="post_images/", null=True, blank=True)
     theme = models.CharField(max_length=100, null=True, blank=True)
     comments = GenericRelation(Comment)
+    theme_zoom_number = models.IntegerField(default=110)
 
     class Meta:
         ordering = ["-published_at"]

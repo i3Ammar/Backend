@@ -19,14 +19,8 @@ class ArtModel(models.Model):
     model_file = models.FileField(
         upload_to = '3d_models/',
         help_text = (
-            'Upload 3D files (.obj ,.fbx,.glb ,.gltf , .stl,)'
+            'Upload 3D files (.obj ,.fbx,.glb ,.gltf)'
         )
-    )
-    preview_image = models.ImageField(
-        upload_to = '3d_previews/',
-        blank = True,
-        null = True,
-        help_text = 'Upload a preview image for the 3D model.'
     )
     tags = models.ManyToManyField(TagsModel, related_name = "art_tags", help_text = 'Comma-seperated tags.')
     created_at = models.DateTimeField(auto_now_add = True)

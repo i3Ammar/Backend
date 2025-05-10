@@ -30,7 +30,7 @@ class ArtViewSet (viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         validate_art_file(self, serializer.validated_data['model_file'])
-        serializer.save(creator = self.request.user)
+        serializer.save(author = self.request.user)
 
     def perform_destroy(self, instance):
         if instance.creator == self.request.user:
