@@ -29,23 +29,21 @@ class PostViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         if self.request.user.is_anonymous:
-            queryset = self.queryset.filter(published_at__lte=timezone.now())
+            queryset = self.queryset.filter(published_at__lte=timezone.now()).order_by("?")
 
         elif not self.request.user.is_staff:
-            queryset = self.queryset
+            queryset = self.queryset.order_by('?')
         else:
             queryset = self.queryset.filter(
                 Q(published_at__lte=timezone.now()) | Q(author=self.request.user)
-            )
+            ).order_by("?")
 
         user_pk = self.kwargs.get('pk')
         if user_pk is not None:
-            queryset = self.queryset.filter(author__pk=user_pk)
+            queryset = self.queryset.filter(author__pk=user_pk).order_by("?")
 
         return queryset
 
-    @method_decorator(vary_on_headers("Authorization", "Cookie"))
-    @method_decorator(cache_page(2 * 60))
     def list(self, *args, **kwargs):
         return super(PostViewSet, self).list(*args, **kwargs)
 
@@ -60,7 +58,7 @@ class PostViewSet(viewsets.ModelViewSet):
     def mine(self, request):
         if request.user.is_anonymous:
             raise PermissionDenied("You must be logged in to see which Posts are yours")
-        posts = self.get_queryset().filter(author=request.user)
+        posts = self.get_queryset().filter(author=request.user).order_by("-published_at")
 
         page = self.paginate_queryset(posts)
 

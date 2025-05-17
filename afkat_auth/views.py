@@ -24,11 +24,12 @@ class UserDetail(generics.RetrieveAPIView, ):
     queryset = User.objects.all()
     serializer_class = UserProfileSerializer
 
+    @method_decorator(cache_page(60 * 5))
     def get(self, *args, **kwargs):
         return super(UserDetail, self).get(*args, **kwargs)
 
 
-#
+
 
 class FollowUserView(generics.CreateAPIView):
     permission_classes = [IsAuthenticated]

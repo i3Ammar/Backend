@@ -36,7 +36,8 @@ class AfkatUserAdmin(UserAdmin):
     search_fields = ("email",)
     ordering = ("email",)
 
-
+def ready(self):
+    import afkat_auth.signals
 admin.site.register(User, AfkatUserAdmin)
-admin.site.register(Profile  )
+admin.site.register(Profile)
 admin.site.register(Follow)
