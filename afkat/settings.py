@@ -213,7 +213,7 @@ DEBUG_TOOLBAR_CONFIG = {
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.IsAuthenticated',),
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.SessionAuthentication',
+        # 'rest_framework.authentication.SessionAuthentication',
         # 'rest_framework.authentication.BaseAuthentication',
         'rest_framework_simplejwt.authentication.JWTAuthentication',
         'dj_rest_auth.jwt_auth.JWTCookieAuthentication',
@@ -293,13 +293,13 @@ CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 
 
-X_FRAME_OPTIONS = 'ALLOWALL'  # Or restrict to specific domains
+X_FRAME_OPTIONS = 'ALLOWALL'
 CORS_ORIGIN_WHITELIST = (
-    'http://localhost:3000',  # for localhost (REACT Default)
-    'http://localhost:5173',  # for localhost (REACT Default)
-    'http://192.168.0.50:3000',  # for network
-    'http://localhost:8080',  # for localhost (Developlemt)
-    'http://192.168.0.50:8080',  # for network (Development)
+    'http://localhost:3000',
+    'http://localhost:5173',
+    'http://192.168.0.50:3000',
+    'http://localhost:8080',
+    'http://192.168.0.50:8080',
 )
 
 # AUTHENTICATION_BACKENDS = [
@@ -338,28 +338,28 @@ AWS_S3_CUSTOM_DOMAIN_MIME_TYPES = {
     '.mem': 'application/octet-stream',
 }
 
-STATIC_URL = "static/"
-MEDIA_ROOT = BASE_DIR / "media"
-MEDIA_URL = "/media/"
+# STATIC_URL = "static/"
+# MEDIA_ROOT = BASE_DIR / "media"
+# MEDIA_URL = "/media/"
 
-# STATIC_LOCATION = 'static'
-# STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{STATIC_LOCATION}/'
-# # s3 public media settings
-# PUBLIC_MEDIA_LOCATION = 'media'
-# MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{PUBLIC_MEDIA_LOCATION}/'
-#
-#
-# STORAGES = {
-#     # Media file (image) management
-#     "default": {
-#         "BACKEND": "storages.backends.s3boto3.S3StaticStorage",
-#     },
-#
-#     # CSS and JS file management
-#     "staticfiles": {
-#         "BACKEND": "storages.backends.s3boto3.S3StaticStorage",
-#     },
-# }
+STATIC_LOCATION = 'static'
+STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{STATIC_LOCATION}/'
+# s3 public media settings
+PUBLIC_MEDIA_LOCATION = 'media'
+MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{PUBLIC_MEDIA_LOCATION}/'
+
+
+STORAGES = {
+    # Media file (image) management
+    "default": {
+        "BACKEND": "storages.backends.s3boto3.S3StaticStorage",
+    },
+
+    # CSS and JS file management
+    "staticfiles": {
+        "BACKEND": "storages.backends.s3boto3.S3StaticStorage",
+    },
+}
 
 DATA_UPLOAD_MAX_MEMORY_SIZE = 1 * 1024 * 1024 * 1024
 FILE_UPLOAD_MAX_MEMORY_SIZE = 1 * 1024 * 1024 * 1024
