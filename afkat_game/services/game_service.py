@@ -26,12 +26,11 @@ def validate_cover_image(self , value):
 
 def validate_game_file(self , value):
     if value.size > 1024*1024*1024:
-        raise serializers.ValidationError({ 'error':'Game file too large' })
+        raise serializers.ValidationError({ 'error':'Game file too large maximum size is 1 GB' })
     valid_extensions = ['zip','7z']
     ext = value.name.split('.')[-1].lower()
     if ext not in valid_extensions:
         raise serializers.ValidationError({ 'error':f'Unsupported file extension.  Use: {', '.join(valid_extensions)}' })
-
     return value
 
 
@@ -42,13 +41,11 @@ def process_webgl_upload(archive_file, game_id):
     from django.conf import settings
     from django.core.files.storage import default_storage
 
-    # Create a directory for this game's WebGL build
     webgl_dir = f"games/{game_id}/"
 
     file_name = archive_file.name.lower()
 
     if file_name.endswith('.zip'):
-        # Process ZIP file
         with zipfile.ZipFile(archive_file) as z:
             for file_info in z.infolist():
                 extracted_path = webgl_dir + file_info.filename
@@ -56,16 +53,13 @@ def process_webgl_upload(archive_file, game_id):
                     with z.open(file_info) as source, default_storage.open(extracted_path, 'wb') as target:
                         target.write(source.read())
 
-            # Return the full URL instead of just the path
             return default_storage.url(webgl_dir + "index.html")
 
 
     elif file_name.endswith('.7z'):
-        # Process 7z file
         try:
             import py7zr
         except ImportError:
-            # Consider logging this error as well
             raise ImportError("The 'py7zr' module is required to process 7z files. Install it with 'pip install py7zr'")
 
         import tempfile
@@ -73,12 +67,9 @@ def process_webgl_upload(archive_file, game_id):
         import shutil
         from django.core.files.storage import default_storage
 
-        # Ensure the file pointer is at the beginning before reading
         archive_file.seek(0)
 
-        # Create a temporary directory to work in
         with tempfile.TemporaryDirectory() as temp_dir:
-            # Create a temporary file path within the temp directory
             temp_archive_path = os.path.join(temp_dir, "temp_archive.7z")
 
             # Save the uploaded file's content to the temporary file

@@ -1,6 +1,7 @@
 from django.utils import timezone
 from django.conf import settings
 from django.core.validators import MaxValueValidator, MinValueValidator
+from django.core.exceptions import ValidationError
 from django.db import models
 
 
@@ -14,13 +15,14 @@ class Game(models.Model):
     tags = models.ManyToManyField(Tags, related_name = "games" )
     title = models.CharField(max_length=200, db_index=True)
     description = models.TextField()
-    game_file = models.FileField(upload_to="games/", null= True , blank = True , )
     thumbnail = models.ImageField(upload_to="games/thumbnails/",default =  'default_images/default_game.jpg', null=True, blank=True)
     creator = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, db_index=True)
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
     updated_at = models.DateTimeField(auto_now=True)
     download_count = models.IntegerField(default=0 , validators = [MinValueValidator(0)], db_index=True)
     rating = models.FloatField(default = 0.0 , validators=[MinValueValidator(1.0), MaxValueValidator(5.0)], db_index=True)
+    game_file = models.FileField(upload_to="games/", null= True , blank = True )
+    game_file_win = models.FileField(upload_to="games/win_builds", null= True , blank = True ,)
     webgl_index_path = models.CharField(max_length = 255, blank = True, null = True)
 
     #     dont forget to add (progress, achievements)
@@ -96,6 +98,14 @@ class GameJam(models.Model):
         'Game', related_name="game_jams", blank=True
     )
     game_jam_thumbnail = models.ImageField(upload_to="game_jams/thumbnails/", default='default_images/default_game.jpg', blank=True ,)
+    isOnline = models.BooleanField(default=False)
+    location = models.CharField(max_length=100, blank=True, null=True)
+
+    def clean(self):
+        super().clean()
+        if not self.isOnline and not self.location:
+            raise ValidationError({'location': 'Location is required for offline game jams.'})
+
     def __str__(self):
         return self.title
 

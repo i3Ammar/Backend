@@ -23,7 +23,7 @@ from afkat_home.utils import get_available_themes
 
 class PostViewSet(viewsets.ModelViewSet):
     permission_classes = [UserIsOwnerOrReadOnly | IsAdminUser]
-    queryset = Post.objects.all()
+    queryset = Post.objects.all().select_related('author')
     filterset_class = PostFilterSet
     ordering_fields = ["published_at", "author", "title", "slug"]
 

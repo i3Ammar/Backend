@@ -1,4 +1,3 @@
-from django.core.files.storage import default_storage
 from django.db import transaction
 from django.http import FileResponse
 from django.utils import timezone
@@ -47,7 +46,7 @@ class GameViewSet(viewsets.ModelViewSet):
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
 
-    @method_decorator(cache_page(60 * 15))
+    @method_decorator(cache_page(60 * 10))
     def retrieve(self, request, *args, **kwargs):
         return super().retrieve(request, *args, **kwargs)
 
@@ -55,15 +54,16 @@ class GameViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         validate_cover_image(self , serializer.validated_data['thumbnail'])
         validate_game_file(self, serializer.validated_data['game_file'])
-        game = serializer.save(creator = self.request.user)
+        # game = serializer.save(creator = self.request.user)
+        serializer.save()
 
-        relative_path = process_webgl_upload(
-            serializer.validated_data['game_file'],
-            game.id
-        )
-
-        game.webgl_index_path = relative_path
-        game.save(update_fields = ['webgl_index_path'])
+        # relative_path = process_webgl_upload(
+        #     serializer.validated_data['game_file'],
+        #     game.id
+        # )
+        #
+        # game.webgl_index_path = relative_path
+        # game.save(update_fields = ['webgl_index_path'])
 
     def perform_destroy(self, instance):
         if instance.creator == self.request.user:

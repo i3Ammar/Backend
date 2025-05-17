@@ -338,28 +338,28 @@ AWS_S3_CUSTOM_DOMAIN_MIME_TYPES = {
     '.mem': 'application/octet-stream',
 }
 
-# STATIC_URL = "static/"
-# MEDIA_ROOT = BASE_DIR / "media"
-# MEDIA_URL = "/media/"
+STATIC_URL = "static/"
+MEDIA_ROOT = BASE_DIR / "media"
+MEDIA_URL = "/media/"
 
-STATIC_LOCATION = 'static'
-STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{STATIC_LOCATION}/'
-# s3 public media settings
-PUBLIC_MEDIA_LOCATION = 'media'
-MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{PUBLIC_MEDIA_LOCATION}/'
-
-
-STORAGES = {
-    # Media file (image) management
-    "default": {
-        "BACKEND": "storages.backends.s3boto3.S3StaticStorage",
-    },
-
-    # CSS and JS file management
-    "staticfiles": {
-        "BACKEND": "storages.backends.s3boto3.S3StaticStorage",
-    },
-}
+# STATIC_LOCATION = 'static'
+# STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{STATIC_LOCATION}/'
+# # s3 public media settings
+# PUBLIC_MEDIA_LOCATION = 'media'
+# MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{PUBLIC_MEDIA_LOCATION}/'
+#
+#
+# STORAGES = {
+#     # Media file (image) management
+#     "default": {
+#         "BACKEND": "storages.backends.s3boto3.S3StaticStorage",
+#     },
+#
+#     # CSS and JS file management
+#     "staticfiles": {
+#         "BACKEND": "storages.backends.s3boto3.S3StaticStorage",
+#     },
+# }
 
 DATA_UPLOAD_MAX_MEMORY_SIZE = 1 * 1024 * 1024 * 1024
 FILE_UPLOAD_MAX_MEMORY_SIZE = 1 * 1024 * 1024 * 1024
