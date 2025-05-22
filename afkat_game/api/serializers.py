@@ -17,6 +17,9 @@ class GameCommentSerializer(serializers.ModelSerializer):
         model = GameComments
         fields = ['id', 'game', 'user', 'username', 'content', 'created_at', 'updated_at']
         read_only_fields = ['user', 'username', 'created_at', 'updated_at']
+        extra_kwargs = {
+            'game':{'required':False},
+        }
 
 
 class GameRatingSerializer(serializers.ModelSerializer):

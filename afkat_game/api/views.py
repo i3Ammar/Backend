@@ -8,7 +8,7 @@ from rest_framework import filters, permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.generics import get_object_or_404
-from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from rest_framework.response import Response
 
 
@@ -30,7 +30,7 @@ class GameViewSet(viewsets.ModelViewSet):
     queryset = Game.objects.all().select_related('creator').prefetch_related('tags')
     serializer_class = GameDetailSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-    parser_classes = [MultiPartParser, FormParser]
+    parser_classes = [MultiPartParser, FormParser , JSONParser]
     pagination_class = GameAndArtLayoutPagination
     filter_backends = [
         DjangoFilterBackend,
@@ -56,7 +56,7 @@ class GameViewSet(viewsets.ModelViewSet):
         validate_game_file(self, serializer.validated_data['game_file'])
         # game = serializer.save(creator = self.request.user)
         serializer.save()
-
+        #FIXME  dont forget to remove the comments  when deploy
         # relative_path = process_webgl_upload(
         #     serializer.validated_data['game_file'],
         #     game.id
@@ -81,6 +81,13 @@ class GameViewSet(viewsets.ModelViewSet):
             serializer.save(user = request.user, game = game)
             return Response(serializer.data, status = status.HTTP_201_CREATED)
         return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
+
+    @action(detail = True, methods = ["get"], permission_classes = [permissions.IsAuthenticated])
+    def comments(self, request, pk = None):
+        game = self.get_object()
+        comments = GameComments.objects.filter(game = game).select_related('user')
+        serializer = GameCommentSerializer(comments, many = True)
+        return Response(serializer.data)
 
     @action(detail = True, methods = ["post"], permission_classes = [permissions.IsAuthenticated])
     def rate(self, request, pk = None):
