@@ -1,8 +1,17 @@
 from rest_framework import serializers
+from django.contrib.auth import get_user_model
+from rest_framework.decorators import permission_classes
+from rest_framework.permissions import IsAdminUser
 
 from afkat.utils.serializer_field import CompressedImageField
-from afkat_auth.models import User
+from afkat_auth.models import (
+    User,
+)
+from afkat_auth.permissions import UserIsOwnerOrReadOnly
 from afkat_home.models import Comment, Post
+
+AuthUser = get_user_model()
+
 
 class AuthorSerializer(serializers.ModelSerializer):
     profile_url = serializers.HyperlinkedIdentityField(
@@ -12,9 +21,8 @@ class AuthorSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ["username", "profile_url"]
-        extra_kwargs = {
-            'username': { 'required':False}
-        }
+        extra_kwargs = {"username": {"required": False}}
+
 
 class CommentSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=True)
@@ -26,36 +34,43 @@ class CommentSerializer(serializers.ModelSerializer):
         readonly = ["modified_at", "created_at"]
 
 
-
-
 class PostSerializer(serializers.ModelSerializer):
     # author = AuthorSerializer(read_only=True)
-    username = serializers.ReadOnlyField(source = 'author.username')
-    user_id = serializers.ReadOnlyField(source = 'author.id')
-    user_profile_image = serializers.URLField(source='author.userProfile.profile_image.url',read_only = True)
-
+    username = serializers.ReadOnlyField(source="author.username")
+    user_id = serializers.ReadOnlyField(source="author.id")
+    user_profile_image = serializers.URLField(
+        source="author.userProfile.profile_image.url", read_only=True
+    )
+    likes_count = serializers.SerializerMethodField()
+    is_liked_by_user = serializers.SerializerMethodField()
 
     image = CompressedImageField(
-        max_size=1200,
-        quality=80,
-        maintain_format=True,
-        max_file_size_kb=500
+        max_size=1200, quality=80, maintain_format=True, max_file_size_kb=500
     )
+
     class Meta:
         model = Post
-        exclude = ["author"]
-        read_only_fields = ["slug","modified_at", "created_at"]
+        exclude = ["author", 'likes']
+        read_only_fields = ["slug", "modified_at", "created_at", "likes_count"]
+
+    def get_likes_count(self, obj):
+        return obj.likes.count()
+
+    def get_is_liked_by_user(self, obj):
+        user = self.context["request"].user
+        if user and user.is_authenticated:
+            return obj.likes.filter(id=user.id).exists()
+        return False
 
     def create(self, validated_data):
-        validated_data['author'] = self.context['request'].user
+        validated_data["author"] = self.context["request"].user
         return super().create(validated_data)
 
 
-
 class PostDetailSerializer(PostSerializer):
-    comments = CommentSerializer(many=True) # need to be checked
+    comments = CommentSerializer(many=True)  # need to be checked
 
-    # @permission_classes(UserIsOwnerOrReadOnly | IsAdminUser )
+    @permission_classes(UserIsOwnerOrReadOnly | IsAdminUser )
     def update(self, instance, validated_data):
         comments = validated_data.pop("comments")
         instance = super(PostDetailSerializer, self).update(instance, validated_data)

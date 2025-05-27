@@ -1,23 +1,20 @@
 from rest_framework import serializers
 
 from afkat.utils.serializer_field import CompressedImageField
-from afkat_art.models import ArtModel , TagsModel
+from afkat_art.models import ArtModel, TagsModel
+
 
 class ArtSerializer(serializers.ModelSerializer):
-    author = serializers.ReadOnlyField(source = 'author.username')
+    author = serializers.ReadOnlyField(source="author.username")
     tags = serializers.SlugRelatedField(
-        many = True,
-        slug_field = "value",
-        queryset = TagsModel.objects.all()
+        many=True, slug_field="value", queryset=TagsModel.objects.all()
     )
-    user_id = serializers.ReadOnlyField(source = 'author.id')
+    user_id = serializers.ReadOnlyField(source="author.id")
 
     thumbnail = CompressedImageField(
-        max_size=1200,
-        quality=80,
-        maintain_format=True,
-        max_file_size_kb=500
+        max_size=1200, quality=80, maintain_format=True, max_file_size_kb=500
     )
+
     class Meta:
         model = ArtModel
         fields = "__all__"

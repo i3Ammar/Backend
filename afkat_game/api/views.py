@@ -1,3 +1,4 @@
+import requests
 from django.db import transaction
 from django.http import FileResponse
 from django.utils import timezone
@@ -10,6 +11,8 @@ from rest_framework.exceptions import PermissionDenied
 from rest_framework.generics import get_object_or_404
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from rest_framework.response import Response
+from rest_framework.views import APIView
+
 
 
 from afkat_game.api.serializers import (
@@ -212,3 +215,11 @@ class GameJamViewSet(viewsets.ModelViewSet):
 
         game_jam.submitted_games.add(game)
         return Response({'status': 'game submitted successfully'})
+
+# class LeaderBoardViewSet(APIView) :
+#     def get(self, request):
+#         permissions = [permissions.IsAuthenticated]
+#         response = requests.get('fakeURL')
+#         return Response(response.json())
+
+

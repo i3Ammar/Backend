@@ -7,6 +7,7 @@ from django.db import models
 
 # Create your models here.
 
+
 class Comment(models.Model):
     creator = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     content = models.TextField(max_length=1000)
@@ -32,6 +33,9 @@ class Post(models.Model):
     theme = models.CharField(max_length=100, null=True, blank=True)
     comments = GenericRelation(Comment)
     theme_zoom_number = models.IntegerField(default=110)
+    likes = models.ManyToManyField(
+        settings.AUTH_USER_MODEL, related_name="liked_posts", blank=True
+    )
 
     class Meta:
         ordering = ["-published_at"]
@@ -48,6 +52,3 @@ class Post(models.Model):
                 self.slug = f"{original_slug}-{counter}"
                 counter += 1
         super().save(*args, **kwargs)
-
-
-

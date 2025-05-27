@@ -9,13 +9,15 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
+
 import os
 from datetime import timedelta
 from pathlib import Path
 
 import environ
-import sentry_sdk
-from sentry_sdk.integrations.django import DjangoIntegration
+
+# import sentry_sdk
+# from sentry_sdk.integrations.django import DjangoIntegration
 import django_heroku
 
 # sentry_sdk.init(
@@ -42,7 +44,7 @@ SECRET_KEY = env("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ["*"]
 
 AUTH_USER_MODEL = "afkat_auth.User"
 SITE_ID = 1
@@ -50,87 +52,85 @@ LOGIN_REDIRECT_URL = "home"
 LOGOUT_REDIRECT_URL = "home"
 
 # Application definition
-LOCAL_APPS = [
-    'afkat_home',
-    'afkat_auth',
-    'afkat_game',
-    'afkat_art'
-]
+LOCAL_APPS = ["afkat_home", "afkat_auth", "afkat_game", "afkat_art"]
 THIRD_PARTY_APPS = [
-    'rest_framework',
-    'corsheaders',
-    'rest_framework_simplejwt',
-    'rest_framework.authtoken',
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
-    'dj_rest_auth.registration',
-    'dj_rest_auth',
-    'debug_toolbar',
-    'django_registration',
-    'django_browser_reload',
-    'django_filters',
-    'crispy_forms',
-    'crispy_bootstrap5',
-    'django_countries',
-    'phonenumber_field',
-    'drf_yasg',
-    'storages',
+    "rest_framework",
+    "corsheaders",
+    "rest_framework_simplejwt",
+    "rest_framework.authtoken",
+    "allauth",
+    "allauth.account",
+    "allauth.socialaccount",
+    "dj_rest_auth.registration",
+    "dj_rest_auth",
+    "debug_toolbar",
+    "django_registration",
+    "django_browser_reload",
+    "django_filters",
+    "crispy_forms",
+    "crispy_bootstrap5",
+    "django_countries",
+    "phonenumber_field",
+    "drf_yasg",
+    "storages",
 ]
 
-INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
-     'django.contrib.contenttypes',
-     'django.contrib.sessions',
-     'django.contrib.messages',
-     'django.contrib.staticfiles',
-     'django.contrib.sites',
-] + THIRD_PARTY_APPS + LOCAL_APPS
+INSTALLED_APPS = (
+    [
+        "django.contrib.admin",
+        "django.contrib.auth",
+        "django.contrib.contenttypes",
+        "django.contrib.sessions",
+        "django.contrib.messages",
+        "django.contrib.staticfiles",
+        "django.contrib.sites",
+    ]
+    + THIRD_PARTY_APPS
+    + LOCAL_APPS
+)
 
 THIRD_PARTY_MIDDLEWARE = [
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
-    'allauth.account.middleware.AccountMiddleware',
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
+    "allauth.account.middleware.AccountMiddleware",
 ]
 MIDDLEWARE = [
-                 'django.middleware.security.SecurityMiddleware',
-                 'django.contrib.sessions.middleware.SessionMiddleware',
-                 'corsheaders.middleware.CorsMiddleware',
-                 'django.middleware.common.CommonMiddleware',
-                 'django.middleware.csrf.CsrfViewMiddleware',
-                 'django.contrib.auth.middleware.AuthenticationMiddleware',
-                 # "django.contrib.auth.middleware.LoginRequiredMiddleware",
-                 'django.contrib.messages.middleware.MessageMiddleware',
-                 'django.middleware.clickjacking.XFrameOptionsMiddleware',
-
-             ] + THIRD_PARTY_MIDDLEWARE
+    "django.middleware.security.SecurityMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    # "django.contrib.auth.middleware.LoginRequiredMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
+] + THIRD_PARTY_MIDDLEWARE
 
 # CSRF_COOKIE_SECURE = False  # Set to True in production
 # CSRF_USE_SESSIONS = False
 # CSRF_COOKIE_HTTPONLY = False
-CSRF_TRUSTED_ORIGINS = ['http://localhost:8000', 'http://127.0.0.1:8000']
+CSRF_TRUSTED_ORIGINS = ["http://localhost:8000", "http://127.0.0.1:8000"]
 # SESSION_COOKIE_SECURE = False
 
-ROOT_URLCONF = 'afkat.urls'
+ROOT_URLCONF = "afkat.urls"
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [BASE_DIR / "templates"],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.debug",
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
             ],
         },
     },
 ]
 
-WSGI_APPLICATION = 'afkat.wsgi.application'
-INTERNAL_IPS = ['127.0.0.1']
+WSGI_APPLICATION = "afkat.wsgi.application"
+INTERNAL_IPS = ["127.0.0.1"]
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
@@ -144,10 +144,10 @@ DATABASES = {
     #     conn_max_age = 600,
     #     conn_health_checks = True,
     # )
-    'default': {
+    "default": {
         **env.db(),
-        'CONN_MAX_AGE': 600,
-        'CONN_HEALTH_CHECKS': True,
+        "CONN_MAX_AGE": 600,
+        "CONN_HEALTH_CHECKS": True,
     }
 }
 # Password validation
@@ -155,25 +155,25 @@ DATABASES = {
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = "UTC"
 
 USE_I18N = True
 
@@ -186,20 +186,20 @@ USE_TZ = True
 # Default primary key field type
 # https://docs.djangoprojecttoject.com/en/5.1/ref/settings/#default-auto-field
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 CACHES = {
-    'default': {
-        'BACKEND': 'django_redis.cache.RedisCache',
-        "LOCATION":os.environ.get('REDISCLOUD_URL' , 'redis://127.0.0.1:6379/0'),
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": os.environ.get("REDISCLOUD_URL", "redis://127.0.0.1:6379/0"),
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
-        }
+        },
     }
 }
-SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
-SESSION_CACHE_ALIAS = 'default'
-CELERY_BROKER_URL = os.environ.get('REDISCLOUD_URL', 'redis://localhost:6379/0')
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+SESSION_CACHE_ALIAS = "default"
+CELERY_BROKER_URL = os.environ.get("REDISCLOUD_URL", "redis://localhost:6379/0")
 
 DEBUG_TOOLBAR_CONFIG = {
     "DISABLE_PANELS": [
@@ -211,21 +211,18 @@ DEBUG_TOOLBAR_CONFIG = {
     "SHOW_TEMPLATE_CONTEXT": True,
 }
 REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.IsAuthenticated',),
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        # 'rest_framework.authentication.SessionAuthentication',
+    # "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        # "rest_framework.authentication.SessionAuthentication",
         # 'rest_framework.authentication.BaseAuthentication',
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-        'dj_rest_auth.jwt_auth.JWTCookieAuthentication',
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+        "dj_rest_auth.jwt_auth.JWTCookieAuthentication",
     ],
-    'DEFAULT_THROTTLE_CLASSES': [
-        'rest_framework.throttling.AnonRateThrottle',
+    "DEFAULT_THROTTLE_CLASSES": [
+        "rest_framework.throttling.AnonRateThrottle",
         "rest_framework.throttling.UserRateThrottle",
     ],
-    'DEFAULT_THROTTLE_RATES': {
-        'anon': '10/minute',
-        'user': '50/minute'
-    },
+    "DEFAULT_THROTTLE_RATES": {"anon": "10/minute", "user": "50/minute"},
     "DEFAULT_FILTER_BACKENDS": [
         "django_filters.rest_framework.DjangoFilterBackend",
         "rest_framework.filters.SearchFilter",
@@ -236,70 +233,77 @@ REST_FRAMEWORK = {
 }
 
 REST_AUTH = {
-    'USE_JWT': True,
-    'JWT_AUTH_COOKIE': 'afkat-auth',
-    'JWT_AUTH_REFRESH_COOKIE': 'afkat-refresh-token',
+    "USE_JWT": True,
+    "JWT_AUTH_COOKIE": "afkat-auth",
+    "JWT_AUTH_REFRESH_COOKIE": "afkat-refresh-token",
     "JWT_AUTH_HTTPONLY": False,
-    'JWT_TOKEN_CLAIMS_SERIALIZER': 'afkat_auth.serializers.CustomTokenObtainPairSerializer',
-
-    'LOGIN_SERIALIZER': 'afkat_auth.serializers.UserLoginSerializer',
-    'REGISTER_SERIALIZER': 'afkat_auth.serializers.CustomRegisterSerializer',
-    'USER_DETAILS_SERIALIZER': 'afkat_auth.serializers.UserProfileSerializer',
+    "JWT_TOKEN_CLAIMS_SERIALIZER": "afkat_auth.serializers.CustomTokenObtainPairSerializer",
+    "LOGIN_SERIALIZER": "afkat_auth.serializers.UserLoginSerializer",
+    "REGISTER_SERIALIZER": "afkat_auth.serializers.CustomRegisterSerializer",
+    "USER_DETAILS_SERIALIZER": "afkat_auth.serializers.UserProfileSerializer",
 }
+
+# with open('private_key.pem', 'r') as private_file:
+#     PRIVATE_KEY = private_file.read()
+#
+# with open('public_key.pem', 'r') as public_file:
+#     PUBLIC_KEY = public_file.read()
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(days = 1),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days = 5),
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=5),
+    "AUTH_HEADER_TYPES": ("Bearer",),
+    # 'ALGORITHM': 'RS256',
+    # 'SIGNING_KEY': PRIVATE_KEY,
+    # 'VERIFYING_KEY': PUBLIC_KEY,
 }
 
-ACCOUNT_LOGIN_METHODS = {'email'}
+ACCOUNT_LOGIN_METHODS = {"email"}
 # ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_USERNAME_REQUIRED = True
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_EMAIL_VERIFICATION = "none"
 ACCOUNT_LOGOUT_ON_GET = False
 
-# CONN_MAX_AGE = 600
-# CONN_HEALTH_CHECKS = True
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 ACCOUNT_ACTIVATION_DAYS = 7
 REGISTRATION_OPEN = True
 
 CORS_ALLOW_METHODS = [
-    'DELETE',
-    'GET',
-    'OPTIONS',
-    'PATCH',
-    'POST',
-    'PUT',
+    "DELETE",
+    "GET",
+    "OPTIONS",
+    "PATCH",
+    "POST",
+    "PUT",
 ]
 CORS_ALLOW_HEADERS = [
-    'ngrok-skip-browser-warning',
-    'accept',
-    'accept-encoding',
-    'authorization',
-    'content-type',
-    'dnt',
-    'origin',
-    'user-agent',
-    'x-csrftoken',
-    'x-requested-with',
-    'access-control-allow-origin',
-    'content-disposition',
+    "ngrok-skip-browser-warning",
+    "accept",
+    "accept-encoding",
+    "authorization",
+    "content-type",
+    "dnt",
+    "origin",
+    "user-agent",
+    "x-csrftoken",
+    "x-requested-with",
+    "access-control-allow-origin",
+    "content-disposition",
 ]
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 
 
-X_FRAME_OPTIONS = 'ALLOWALL'
+X_FRAME_OPTIONS = "ALLOWALL"
 CORS_ORIGIN_WHITELIST = (
-    'http://localhost:3000',
-    'http://localhost:5173',
-    'http://192.168.0.50:3000',
-    'http://localhost:8080',
-    'http://192.168.0.50:8080',
+    "http://localhost:3000",
+    "http://localhost:5173",
+    "http://192.168.0.50:3000",
+    "http://localhost:8080",
+    "http://192.168.0.50:8080",
 )
 
 # AUTHENTICATION_BACKENDS = [
@@ -311,42 +315,42 @@ CORS_ORIGIN_WHITELIST = (
 # ]
 
 SWAGGER_SETTINGS = {
-    'SECURITY_DEFINITIONS': {
-        'Basic': {
-            'type': 'basic',
+    "SECURITY_DEFINITIONS": {
+        "Basic": {
+            "type": "basic",
         }
     }
 }
-AWS_ACCESS_KEY_ID = env('AWS_ACCESS_KEY_ID')
-AWS_SECRET_ACCESS_KEY = env('AWS_SECRET_ACCESS_KEY')
-AWS_STORAGE_BUCKET_NAME = env('AWS_STORAGE_BUCKET_NAME')
-AWS_S3_REGION_NAME = env('AWS_S3_REGION_NAME')
-AWS_S3_CUSTOM_DOMAIN = env('AWS_S3_CUSTOM_DOMAIN')
+AWS_ACCESS_KEY_ID = env("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = env("AWS_SECRET_ACCESS_KEY")
+AWS_STORAGE_BUCKET_NAME = env("AWS_STORAGE_BUCKET_NAME")
+AWS_S3_REGION_NAME = env("AWS_S3_REGION_NAME")
+AWS_S3_CUSTOM_DOMAIN = env("AWS_S3_CUSTOM_DOMAIN")
 
 AWS_S3_FILE_OVERWRITE = False
-AWS_DEFAULT_ACL = 'public-read'
+AWS_DEFAULT_ACL = "public-read"
 AWS_S3_OBJECT_PARAMETERS = {
-    'CacheControl': 'max-age=86400',
+    "CacheControl": "max-age=86400",
 }
 
 AWS_S3_CUSTOM_DOMAIN_MIME_TYPES = {
-    '.unityweb': 'application/octet-stream',
-    '.js': 'application/javascript',
-    '.wasm': 'application/wasm',
-    '.json': 'application/json',
-    '.data': 'application/octet-stream',
-    '.mem': 'application/octet-stream',
+    ".unityweb": "application/octet-stream",
+    ".js": "application/javascript",
+    ".wasm": "application/wasm",
+    ".json": "application/json",
+    ".data": "application/octet-stream",
+    ".mem": "application/octet-stream",
 }
 
 # STATIC_URL = "static/"
 # MEDIA_ROOT = BASE_DIR / "media"
 # MEDIA_URL = "/media/"
 
-STATIC_LOCATION = 'static'
-STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{STATIC_LOCATION}/'
+STATIC_LOCATION = "static"
+STATIC_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{STATIC_LOCATION}/"
 # s3 public media settings
-PUBLIC_MEDIA_LOCATION = 'media'
-MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{PUBLIC_MEDIA_LOCATION}/'
+PUBLIC_MEDIA_LOCATION = "media"
+MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{PUBLIC_MEDIA_LOCATION}/"
 
 
 STORAGES = {
@@ -354,7 +358,6 @@ STORAGES = {
     "default": {
         "BACKEND": "storages.backends.s3boto3.S3StaticStorage",
     },
-
     # CSS and JS file management
     "staticfiles": {
         "BACKEND": "storages.backends.s3boto3.S3StaticStorage",
@@ -364,5 +367,3 @@ STORAGES = {
 DATA_UPLOAD_MAX_MEMORY_SIZE = 1 * 1024 * 1024 * 1024
 FILE_UPLOAD_MAX_MEMORY_SIZE = 1 * 1024 * 1024 * 1024
 django_heroku.settings(locals())
-
-
