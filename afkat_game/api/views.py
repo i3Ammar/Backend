@@ -129,7 +129,7 @@ class GameViewSet(viewsets.ModelViewSet):
 
 
 class GameCommentViewSet(viewsets.ModelViewSet):
-    queryset = GameComments.objects.all().select_related("game_comments_user", "game")
+    queryset = GameComments.objects.all().select_related("user", "game")
     serializer_class = GameCommentSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
@@ -138,7 +138,7 @@ class GameCommentViewSet(viewsets.ModelViewSet):
 
 
 class GameRatingViewSet(viewsets.ModelViewSet):
-    queryset = GameRating.objects.all().select_related("game_rating_user ", "game")
+    queryset = GameRating.objects.all().select_related("user", "game")
     serializer_class = GameRatingSerializer
     permission_classes = [permissions.IsAuthenticated]
 
