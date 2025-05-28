@@ -32,7 +32,7 @@ class GameRatingSerializer(serializers.ModelSerializer):
 
 
 class GameDetailSerializer(serializers.ModelSerializer):
-    creator = serializers.ReadOnlyField(source = 'creator.username')
+    username = serializers.ReadOnlyField(source = 'creator.username')
     user_id = serializers.ReadOnlyField(source = 'creator.id')
     user_rating = serializers.SerializerMethodField()
     tags = serializers.SlugRelatedField(
@@ -50,9 +50,9 @@ class GameDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Game
-        fields = ['id', 'creator_id', 'creator', 'title', 'description', 'user_rating', 'tags',
+        fields = ['id', 'user_id', 'username', 'title', 'description', 'user_rating', 'tags',
                   'download_count', 'rating', 'thumbnail', "game_file", 'game_file_win', 'webgl_index_path', ]
-        read_only_fields = ['creator_id','creator', 'download_count', 'created_at', 'updated_at', 'webgl_index_path']
+        read_only_fields = ['user_id','username', 'download_count', 'created_at', 'updated_at', 'webgl_index_path']
         extra_kwargs = {
             'rating': {'required': False},
         }

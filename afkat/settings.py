@@ -50,7 +50,6 @@ SITE_ID = 1
 LOGIN_REDIRECT_URL = "home"
 LOGOUT_REDIRECT_URL = "home"
 
-# Application definition
 LOCAL_APPS = ["afkat_home", "afkat_auth", "afkat_game", "afkat_art"]
 THIRD_PARTY_APPS = [
     "rest_framework",
@@ -94,6 +93,7 @@ THIRD_PARTY_MIDDLEWARE = [
 ]
 MIDDLEWARE = [
                  "django.middleware.security.SecurityMiddleware",
+                 'whitenoise.middleware.WhiteNoiseMiddleware',
                  "django.contrib.sessions.middleware.SessionMiddleware",
                  "corsheaders.middleware.CorsMiddleware",
                  "django.middleware.common.CommonMiddleware",
@@ -181,13 +181,12 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-
 # Default primary key field type
 # https://docs.djangoprojecttoject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-cache_on: bool = True
-if not cache_on:
+cache_production_on: bool = True
+if not  cache_production_on:
     CACHES = {
         'default': {
             'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
@@ -217,10 +216,8 @@ DEBUG_TOOLBAR_CONFIG = {
     "SHOW_TEMPLATE_CONTEXT": True,
 }
 REST_FRAMEWORK = {
-    # "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework.authentication.SessionAuthentication",
-        # 'rest_framework.authentication.BaseAuthentication',
         "rest_framework_simplejwt.authentication.JWTAuthentication",
         "dj_rest_auth.jwt_auth.JWTCookieAuthentication",
     ],
@@ -249,19 +246,10 @@ REST_AUTH = {
     "USER_DETAILS_SERIALIZER": "afkat_auth.serializers.UserProfileSerializer",
 }
 
-# with open('private_key.pem', 'r') as private_file:
-#     PRIVATE_KEY = private_file.read()
-#
-# with open('public_key.pem', 'r') as public_file:
-#     PUBLIC_KEY = public_file.read()
-
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(days = 1),
     "REFRESH_TOKEN_LIFETIME": timedelta(days = 5),
     "AUTH_HEADER_TYPES": ("Bearer",),
-    # 'ALGORITHM': 'RS256',
-    # 'SIGNING_KEY': PRIVATE_KEY,
-    # 'VERIFYING_KEY': PUBLIC_KEY,
 }
 
 ACCOUNT_LOGIN_METHODS = {"email"}
@@ -347,27 +335,42 @@ AWS_S3_CUSTOM_DOMAIN_MIME_TYPES = {
     ".mem": "application/octet-stream",
 }
 
-# STATIC_URL = "static/"
 # MEDIA_ROOT = BASE_DIR / "media"
 # MEDIA_URL = "/media/"
 
-STATIC_LOCATION = "static"
-STATIC_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{STATIC_LOCATION}/"
-# s3 public media settings
+# #no change
+# STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+#
+# #for local
+# # STATIC_URL = "static/"
+# # STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+#
+#
+# STATIC_LOCATION = "static"
+# STATIC_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{STATIC_LOCATION}/"
 PUBLIC_MEDIA_LOCATION = "media"
 MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{PUBLIC_MEDIA_LOCATION}/"
+#
+# STORAGES = {
+#     "default": {
+#         "BACKEND": "storages.backends.s3boto3.S3StaticStorage",
+#     },
+#     "staticfiles": {
+#         "BACKEND": "storages.backends.s3boto3.S3StaticStorage",
+#     },
+# }
 
-STORAGES = {
-    # Media file (image) management
-    "default": {
-        "BACKEND": "storages.backends.s3boto3.S3StaticStorage",
-    },
-    # CSS and JS file management
-    "staticfiles": {
-        "BACKEND": "storages.backends.s3boto3.S3StaticStorage",
-    },
-}
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# For Amazon S3
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+
+WHITENOISE_MAX_AGE = 31536000
+WHITENOISE_KEEP_ONLY_HASHED_FILES = True
 
 DATA_UPLOAD_MAX_MEMORY_SIZE = 1 * 1024 * 1024 * 1024
 FILE_UPLOAD_MAX_MEMORY_SIZE = 1 * 1024 * 1024 * 1024
-django_heroku.settings(locals())
+django_heroku.settings(locals() , staticfiles = False )

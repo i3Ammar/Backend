@@ -59,7 +59,7 @@ class ArtViewSet(viewsets.ModelViewSet):
     @action(detail = True, methods = ["get"], permission_classes = [permissions.IsAuthenticated])
     def comments(self, request, pk = None):
         art = self.get_object()
-        comments = ArtComment.objects.filter(art = art).select_related('author')
+        comments = ArtComment.objects.filter(art = art).select_related('user','art')
         serializer = ArtCommentSerializer(comments, many = True)
         return Response(serializer.data)
 

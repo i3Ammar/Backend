@@ -1,18 +1,18 @@
 from rest_framework import serializers
 
 from afkat.utils.serializer_field import CompressedImageField
-from afkat_art.models import ArtModel, TagsModel, ArtRating , ArtComment
+from afkat_art.models import ArtModel, TagsModel, ArtRating, ArtComment
 
 
 class ArtSerializer(serializers.ModelSerializer):
-    author = serializers.ReadOnlyField(source="author.username")
+    author = serializers.ReadOnlyField(source = "author.username")
     tags = serializers.SlugRelatedField(
-        many=True, slug_field="value", queryset=TagsModel.objects.all()
+        many = True, slug_field = "value", queryset = TagsModel.objects.all()
     )
-    user_id = serializers.ReadOnlyField(source="author.id")
+    user_id = serializers.ReadOnlyField(source = "author.id")
 
     thumbnail = CompressedImageField(
-        max_size=1200, quality=80, maintain_format=True, max_file_size_kb=500
+        max_size = 1200, quality = 80, maintain_format = True, max_file_size_kb = 500
     )
 
     class Meta:
@@ -29,14 +29,17 @@ class ArtSerializer(serializers.ModelSerializer):
 
 class ArtCommentSerializer(serializers.ModelSerializer):
     username = serializers.ReadOnlyField(source = 'user.username')
+    user_id = serializers.ReadOnlyField(source = 'user.id')
 
     class Meta:
         model = ArtComment
-        fields = ['id', 'art', 'user', 'username', 'content', 'created_at', 'updated_at']
-        read_only_fields = ['user', 'username', 'created_at', 'updated_at']
+        fields = ['id', 'art', 'user_id', 'username', 'content', 'created_at', 'updated_at']
+        read_only_fields = ['user_id', 'username', 'created_at', 'updated_at']
         extra_kwargs = {
-            'art':{'required':False},
+            'art': {'required': False},
         }
+
+
 class ArtRatingSerializer(serializers.ModelSerializer):
     username = serializers.ReadOnlyField(source = 'user.username')
     art = serializers.ReadOnlyField(source = 'art.title')
