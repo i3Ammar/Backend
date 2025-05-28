@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from afkat.utils.serializer_field import CompressedImageField
-from afkat_art.models import ArtModel, TagsModel
+from afkat_art.models import ArtModel, TagsModel, ArtRating , ArtComment
 
 
 class ArtSerializer(serializers.ModelSerializer):
@@ -25,3 +25,23 @@ class ArtSerializer(serializers.ModelSerializer):
         art = ArtModel.objects.create(**validated_data)
         art.tags.set(tags_data)
         return art
+
+
+class ArtCommentSerializer(serializers.ModelSerializer):
+    username = serializers.ReadOnlyField(source = 'user.username')
+
+    class Meta:
+        model = ArtComment
+        fields = ['id', 'art', 'user', 'username', 'content', 'created_at', 'updated_at']
+        read_only_fields = ['user', 'username', 'created_at', 'updated_at']
+        extra_kwargs = {
+            'art':{'required':False},
+        }
+class ArtRatingSerializer(serializers.ModelSerializer):
+    username = serializers.ReadOnlyField(source = 'user.username')
+    art = serializers.ReadOnlyField(source = 'art.title')
+
+    class Meta:
+        model = ArtRating
+        fields = ['art', 'username', 'rating']
+        read_only_fields = ['user', 'username']

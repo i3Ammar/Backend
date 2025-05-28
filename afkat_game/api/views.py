@@ -42,14 +42,14 @@ class GameViewSet(viewsets.ModelViewSet):
     ]
     filterset_class = GameFilter
     search_fields = ['title']
-    ordering_fields = ['id','title', 'created_at']
-    ordering = ['-id']
+    ordering_fields = ['title', 'created_at']
+    ordering = ['?']
 
     @method_decorator(cache_page(60 * 5))
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
 
-    @method_decorator(cache_page(60 * 10))
+    @method_decorator(cache_page(60 * 5))
     def retrieve(self, request, *args, **kwargs):
         return super().retrieve(request, *args, **kwargs)
 
@@ -64,7 +64,6 @@ class GameViewSet(viewsets.ModelViewSet):
         #     serializer.validated_data['game_file'],
         #     game.id
         # )
-        #
         # game.webgl_index_path = relative_path
         # game.save(update_fields = ['webgl_index_path'])
 

@@ -12,11 +12,11 @@ Here are some additional features you can implement to enhance the user experien
 
 6. **Social Sharing**: Integrate social media sharing options for posts and games.
 
-7. **User Dashboard**: Create a dashboard for users to manage their posts, games, and participation in gamejams. (Abu saif)
+[//]: # (7. **User Dashboard**: Create a dashboard for users to manage their posts, games, and participation in gamejams. &#40;Abu saif&#41;)
 
-8. **Achievements and Badges**: Implement a system for awarding achievements and badges to users based on their activity.(ABU saif)
+[//]: # (8. **Achievements and Badges**: Implement a system for awarding achievements and badges to users based on their activity.&#40;ABU saif&#41;)
 
-9. **Responsive Design**: Ensure the application is mobile-friendly and responsive.
+[//]: # (9. **Responsive Design**: Ensure the application is mobile-friendly and responsive.)
 
 [//]: # (10. **Advanced Filtering**: Provide advanced filtering options for posts and games based on tags, ratings, and other criteria.)
 
