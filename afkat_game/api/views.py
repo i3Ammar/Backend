@@ -57,15 +57,14 @@ class GameViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         validate_cover_image(self , serializer.validated_data['thumbnail'])
         validate_game_file(self, serializer.validated_data['game_file'])
-        # game = serializer.save(creator = self.request.user)
-        serializer.save()
-        #FIXME  dont forget to remove the comments  when deploy
-        # relative_path = process_webgl_upload(
-        #     serializer.validated_data['game_file'],
-        #     game.id
-        # )
-        # game.webgl_index_path = relative_path
-        # game.save(update_fields = ['webgl_index_path'])
+        game = serializer.save(creator = self.request.user)
+        # serializer.save()
+        relative_path = process_webgl_upload(
+            serializer.validated_data['game_file'],
+            game.id
+        )
+        game.webgl_index_path = relative_path
+        game.save(update_fields = ['webgl_index_path'])
 
     def perform_destroy(self, instance):
         if instance.creator == self.request.user:
