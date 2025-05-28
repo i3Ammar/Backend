@@ -3,6 +3,7 @@ from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
+from django.urls import reverse
 
 
 # Create your models here.
@@ -52,3 +53,6 @@ class Post(models.Model):
                 self.slug = f"{original_slug}-{counter}"
                 counter += 1
         super().save(*args, **kwargs)
+
+    def get_absolute_url(self):
+        return reverse("afkat_home_api:post-detail", kwargs={"pk": self.pk})

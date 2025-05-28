@@ -3,6 +3,7 @@ from django.conf import settings
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.urls import reverse
 
 
 class Tags(models.Model):
@@ -10,6 +11,9 @@ class Tags(models.Model):
 
     def __str__(self):
         return self.value
+
+    def get_absolute_url(self):
+        return reverse("game-detail", kwargs={"pk": self.pk})
 
 
 class Game(models.Model):
@@ -51,6 +55,9 @@ class Game(models.Model):
     def __str__(self):
         return self.title
 
+    def get_absolute_url(self):
+        return reverse("game-detail", kwargs={"pk": self.pk})
+
 
 class GameComments(models.Model):
     game = models.ForeignKey(
@@ -58,7 +65,7 @@ class GameComments(models.Model):
     )
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        related_name="game_comments",
+        related_name="game_comments_user",
         on_delete=models.CASCADE,
         db_index=True,
     )
@@ -79,7 +86,7 @@ class GameRating(models.Model):
     )
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        related_name="game_rating",
+        related_name="game_rating_user",
         on_delete=models.CASCADE,
         db_index=True,
     )

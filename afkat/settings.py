@@ -14,11 +14,10 @@ import os
 from datetime import timedelta
 from pathlib import Path
 
-import environ
-
 # import sentry_sdk
 # from sentry_sdk.integrations.django import DjangoIntegration
 import django_heroku
+import environ
 
 # sentry_sdk.init(
 #     dsn = "https://d8f1bd59fec9bf8736045bc9feae82c0@o4509159271301120.ingest.de.sentry.io/4509159313047632",
@@ -76,17 +75,17 @@ THIRD_PARTY_APPS = [
 ]
 
 INSTALLED_APPS = (
-    [
-        "django.contrib.admin",
-        "django.contrib.auth",
-        "django.contrib.contenttypes",
-        "django.contrib.sessions",
-        "django.contrib.messages",
-        "django.contrib.staticfiles",
-        "django.contrib.sites",
-    ]
-    + THIRD_PARTY_APPS
-    + LOCAL_APPS
+        [
+            "django.contrib.admin",
+            "django.contrib.auth",
+            "django.contrib.contenttypes",
+            "django.contrib.sessions",
+            "django.contrib.messages",
+            "django.contrib.staticfiles",
+            "django.contrib.sites",
+        ]
+        + THIRD_PARTY_APPS
+        + LOCAL_APPS
 )
 
 THIRD_PARTY_MIDDLEWARE = [
@@ -94,16 +93,16 @@ THIRD_PARTY_MIDDLEWARE = [
     "allauth.account.middleware.AccountMiddleware",
 ]
 MIDDLEWARE = [
-    "django.middleware.security.SecurityMiddleware",
-    "django.contrib.sessions.middleware.SessionMiddleware",
-    "corsheaders.middleware.CorsMiddleware",
-    "django.middleware.common.CommonMiddleware",
-    "django.middleware.csrf.CsrfViewMiddleware",
-    "django.contrib.auth.middleware.AuthenticationMiddleware",
-    # "django.contrib.auth.middleware.LoginRequiredMiddleware",
-    "django.contrib.messages.middleware.MessageMiddleware",
-    "django.middleware.clickjacking.XFrameOptionsMiddleware",
-] + THIRD_PARTY_MIDDLEWARE
+                 "django.middleware.security.SecurityMiddleware",
+                 "django.contrib.sessions.middleware.SessionMiddleware",
+                 "corsheaders.middleware.CorsMiddleware",
+                 "django.middleware.common.CommonMiddleware",
+                 "django.middleware.csrf.CsrfViewMiddleware",
+                 "django.contrib.auth.middleware.AuthenticationMiddleware",
+                 # "django.contrib.auth.middleware.LoginRequiredMiddleware",
+                 "django.contrib.messages.middleware.MessageMiddleware",
+                 "django.middleware.clickjacking.XFrameOptionsMiddleware",
+             ] + THIRD_PARTY_MIDDLEWARE
 
 # CSRF_COOKIE_SECURE = False  # Set to True in production
 # CSRF_USE_SESSIONS = False
@@ -187,16 +186,23 @@ USE_TZ = True
 # https://docs.djangoprojecttoject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-
-CACHES = {
-    "default": {
-        "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": os.environ.get("REDISCLOUD_URL", "redis://127.0.0.1:6379/0"),
-        "OPTIONS": {
-            "CLIENT_CLASS": "django_redis.client.DefaultClient",
-        },
+cache_on: bool = True
+if not cache_on:
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+        }
     }
-}
+else:
+    CACHES = {
+        "default": {
+            "BACKEND": "django_redis.cache.RedisCache",
+            "LOCATION": os.environ.get("REDISCLOUD_URL", "redis://127.0.0.1:6379/0"),
+            "OPTIONS": {
+                "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            },
+        }
+    }
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 SESSION_CACHE_ALIAS = "default"
 CELERY_BROKER_URL = os.environ.get("REDISCLOUD_URL", "redis://localhost:6379/0")
@@ -213,7 +219,7 @@ DEBUG_TOOLBAR_CONFIG = {
 REST_FRAMEWORK = {
     # "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        # "rest_framework.authentication.SessionAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
         # 'rest_framework.authentication.BaseAuthentication',
         "rest_framework_simplejwt.authentication.JWTAuthentication",
         "dj_rest_auth.jwt_auth.JWTCookieAuthentication",
@@ -250,8 +256,8 @@ REST_AUTH = {
 #     PUBLIC_KEY = public_file.read()
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=5),
+    "ACCESS_TOKEN_LIFETIME": timedelta(days = 1),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days = 5),
     "AUTH_HEADER_TYPES": ("Bearer",),
     # 'ALGORITHM': 'RS256',
     # 'SIGNING_KEY': PRIVATE_KEY,
@@ -295,7 +301,6 @@ CORS_ALLOW_HEADERS = [
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
-
 
 X_FRAME_OPTIONS = "ALLOWALL"
 CORS_ORIGIN_WHITELIST = (
@@ -351,7 +356,6 @@ STATIC_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{STATIC_LOCATION}/"
 # s3 public media settings
 PUBLIC_MEDIA_LOCATION = "media"
 MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{PUBLIC_MEDIA_LOCATION}/"
-
 
 STORAGES = {
     # Media file (image) management

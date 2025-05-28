@@ -3,7 +3,6 @@ from rest_framework import serializers
 
 from afkat.utils.serializer_field import CompressedImageField
 from afkat_game.models import Game, GameComments, GameRating, Tags, GameJam
-
 from afkat_game.services.game_jam_service import join_game_jam, leave_game_jam
 from afkat_game.services.game_service import get_user_rating
 
@@ -18,7 +17,7 @@ class GameCommentSerializer(serializers.ModelSerializer):
         fields = ['id', 'game', 'user', 'username', 'content', 'created_at', 'updated_at']
         read_only_fields = ['user', 'username', 'created_at', 'updated_at']
         extra_kwargs = {
-            'game':{'required':False},
+            'game': {'required': False},
         }
 
 
@@ -34,6 +33,7 @@ class GameRatingSerializer(serializers.ModelSerializer):
 
 class GameDetailSerializer(serializers.ModelSerializer):
     creator = serializers.ReadOnlyField(source = 'creator.username')
+    user_id = serializers.ReadOnlyField(source = 'creator.id')
     user_rating = serializers.SerializerMethodField()
     tags = serializers.SlugRelatedField(
         many = True,
@@ -42,17 +42,17 @@ class GameDetailSerializer(serializers.ModelSerializer):
     )
 
     thumbnail = CompressedImageField(
-        max_size=1200,
-        quality=80,
-        maintain_format=True,
-        max_file_size_kb=500
+        max_size = 1200,
+        quality = 80,
+        maintain_format = True,
+        max_file_size_kb = 500
     )
 
     class Meta:
         model = Game
-        fields = ['id','title','description', 'creator', 'user_rating', 'tags',
-                  'download_count', 'rating','thumbnail',"game_file",'game_file_win','webgl_index_path',]
-        read_only_fields = ['creator','download_count','created_at','updated_at','webgl_index_path']
+        fields = ['id', 'creator_id', 'creator', 'title', 'description', 'user_rating', 'tags',
+                  'download_count', 'rating', 'thumbnail', "game_file", 'game_file_win', 'webgl_index_path', ]
+        read_only_fields = ['creator_id','creator', 'download_count', 'created_at', 'updated_at', 'webgl_index_path']
         extra_kwargs = {
             'rating': {'required': False},
         }
@@ -64,7 +64,6 @@ class GameDetailSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         validated_data['creator'] = self.context['request'].user
         return super().create(validated_data)
-
 
 
 class GameJamSerializer(serializers.ModelSerializer):
@@ -81,7 +80,7 @@ class GameJamSerializer(serializers.ModelSerializer):
             'id', 'title', 'description', 'created_by',
             'start_date', 'end_date', 'theme', 'prizes',
             'participants', 'participants_count',
-            'is_active','game_jam_thumbnail','isOnline','location'
+            'is_active', 'game_jam_thumbnail', 'isOnline', 'location'
         ]
         read_only_fields = ["created_by"]
 
@@ -92,12 +91,13 @@ class GameJamSerializer(serializers.ModelSerializer):
         validate_data['created_by'] = self.context['request'].user
         return super().create(validate_data)
 
+
 class GameJamParticipationSerializer(serializers.Serializer):
     action = serializers.ChoiceField(choices = ['join', 'leave'])
 
     def validate(self, data):
         if 'game_jam' not in self.context:
-            raise serializers.ValidationError({ "error": "GameJam context missing" })
+            raise serializers.ValidationError({"error": "GameJam context missing"})
         return data
 
     def save(self, **kwargs):

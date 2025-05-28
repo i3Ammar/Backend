@@ -22,7 +22,7 @@ class ArtModel(models.Model):
     )
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete = models.CASCADE)
     model_file = models.FileField(
-        upload_to = "3d_models/", help_text = ("Upload 3D files (.obj ,.fbx,.glb ,.gltf)")
+        upload_to = "3d_models/", help_text = "Upload 3D files (.obj ,.fbx,.glb ,.gltf)"
     )
     tags = models.ManyToManyField(
         TagsModel, related_name = "art_tags", help_text = "Comma-seperated tags."

@@ -1,10 +1,7 @@
-from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render
-from django.utils.decorators import method_decorator
-from django.views.decorators.cache import cache_page
 from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -21,19 +18,17 @@ def profile(request):
 
 
 class UserDetail(generics.RetrieveAPIView, ):
-    queryset = User.objects.all()
+    queryset = User.objects.all().select_related('userProfile')
     serializer_class = UserProfileSerializer
 
     def get(self, *args, **kwargs):
         return super(UserDetail, self).get(*args, **kwargs)
 
 
-
-
 class FollowUserView(generics.CreateAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = FollowSerializer
-    queryset = Follow.objects.all()
+    queryset = Follow.objects.all().select_related('follower', 'following')
 
     def create(self, request, *args, **kwargs):
         pk = self.kwargs.get('pk')
@@ -68,29 +63,29 @@ class FollowUserView(generics.CreateAPIView):
 class UnfollowUserView(generics.DestroyAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = FollowSerializer
-    queryset = Follow.objects.all()
+    queryset = Follow.objects.all().select_related('follower', 'following')
 
-    def get_object(self ):
+    def get_object(self):
         following_pk = self.kwargs.get('pk')
-        user_to_unfollow = get_object_or_404(User , pk = following_pk)
+        user_to_unfollow = get_object_or_404(User, pk = following_pk)
         follower = self.request.user
 
-        try :
+        try:
             obj = self.get_queryset().get(
-                follower = follower ,
+                follower = follower,
                 following = user_to_unfollow
             )
         except Follow.DoesNotExist:
             raise Http404('You are not following this user.')
 
-        self.check_object_permissions(self.request , obj)
+        self.check_object_permissions(self.request, obj)
         return obj
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
         username = instance.following.username
         self.perform_destroy(instance)
-        return Response({'detail': f'You are no longer following {username}'} , status = status.HTTP_200_OK)
+        return Response({'detail': f'You are no longer following {username}'}, status = status.HTTP_200_OK)
 
 
 class UserFollowersView(generics.ListAPIView):
@@ -103,8 +98,8 @@ class UserFollowersView(generics.ListAPIView):
         if not self.request or not hasattr(self.request, 'parser_context'):
             return User.objects.none()
 
-        user = get_object_or_404(User, pk=user_id)
-        followers = User.objects.filter(following__following=user)
+        user = get_object_or_404(User, pk = user_id)
+        followers = User.objects.filter(following__following = user)
         return followers
 
 

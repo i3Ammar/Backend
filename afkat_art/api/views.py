@@ -16,7 +16,7 @@ from ..services.art_services import validate_art_file
 
 
 class ArtViewSet(viewsets.ModelViewSet):
-    queryset = ArtModel.objects.all()
+    queryset = ArtModel.objects.all().select_related("author").prefetch_related("tags")
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     serializer_class = ArtSerializer
     filter_backends = [filters.SearchFilter, DjangoFilterBackend]
@@ -59,7 +59,7 @@ class ArtViewSet(viewsets.ModelViewSet):
     @action(detail = True, methods = ["get"], permission_classes = [permissions.IsAuthenticated])
     def comments(self, request, pk = None):
         art = self.get_object()
-        comments = ArtComment.objects.filter(art = art).select_related('user')
+        comments = ArtComment.objects.filter(art = art).select_related('author')
         serializer = ArtCommentSerializer(comments, many = True)
         return Response(serializer.data)
 
