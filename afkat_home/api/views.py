@@ -1,4 +1,4 @@
-from django.db.models import Q
+from django.db.models import Q, Exists, OuterRef
 from django.http import JsonResponse
 from django.utils import timezone
 from django.utils.decorators import method_decorator
@@ -23,24 +23,46 @@ from afkat_home.utils import get_available_themes
 
 class PostViewSet(viewsets.ModelViewSet):
     permission_classes = [UserIsOwnerOrReadOnly | IsAdminUser]
-    queryset = Post.objects.select_related("author", "author__userProfile").prefetch_related('likes').all()
+    queryset = (
+        Post.objects.select_related("author", "author__userProfile")
+        .prefetch_related("likes")
+        .all()
+    )
     filterset_class = PostFilterSet
     ordering_fields = ["published_at", "author", "title", "slug"]
 
     def get_queryset(self):
-        if self.request.user.is_anonymous:
-            queryset = self.queryset.filter(published_at__lte = timezone.now()).order_by(
-                "?"
-            )
+        queryset = super().get_queryset()
 
-        elif not self.request.user.is_staff:
-            queryset = self.queryset.order_by("?")
+        user_pk = self.kwargs.get("user_pk")
+        if user_pk is not None:
+            queryset = self.queryset.filter(author__pk = user_pk).order_by("-published_at")
+
+            if self.request.user.is_anonymous:
+                queryset = self.queryset.filter(
+                    published_at__lte = timezone.now()
+                ).order_by("?")
+
         else:
-            queryset = self.queryset.filter(
-                Q(published_at__lte = timezone.now()) | Q(author = self.request.user)
-            ).order_by("?")
+            if self.request.user.is_anonymous:
+                queryset = queryset.filter(published_at__lte = timezone.now()).order_by("?")
 
-        return queryset.select_related("author", "author__userProfile").prefetch_related('likes')
+            elif not self.request.user.is_staff:
+                queryset = queryset.order_by("?")
+            else:  # Authenticated
+                queryset = queryset.filter(
+                    Q(published_at__lte = timezone.now()) | Q(author = self.request.user)
+                ).order_by("?")
+
+        if self.request.user.is_authenticated:
+            user_likes = Post.likes.through.objects.filter(
+                post_id = OuterRef("pk"), user_id = self.request.user.id
+            )
+            queryset = queryset.annotate(is_liked_by_user = Exists(user_likes))
+
+        return queryset.select_related(
+            "author", "author__userProfile"
+        ).prefetch_related("likes")
 
     def list(self, *args, **kwargs):
         return super(PostViewSet, self).list(*args, **kwargs)
@@ -79,7 +101,7 @@ class PostViewSet(viewsets.ModelViewSet):
 
     @action(detail = True, methods = ["post"], permission_classes = [IsAuthenticated])
     def like(self, request, pk = None):
-        post = self.get_object()
+        post = self.get_object().prefetch_related("likes")
         user = request.user
 
         if post.likes.filter(id = user.id).exists():
@@ -95,7 +117,7 @@ class PostViewSet(viewsets.ModelViewSet):
         )
 
 
-@api_view(['GET'])
+@api_view(["GET"])
 def get_post_share_links(request, post_pk):
     """Generate social media share links for a post."""
     try:
@@ -107,18 +129,16 @@ def get_post_share_links(request, post_pk):
 
         # Prepare sharing links for different platforms
         share_links = {
-            'facebook': f'https://www.facebook.com/sharer/sharer.php?u={post_url}',
-            'twitter': f'https://twitter.com/intent/tweet?text={post.title}&url={post_url}',
-            'linkedin': f'https://www.linkedin.com/sharing/share-offsite/?url={post_url}',
-            'reddit': f'https://www.reddit.com/submit?url={post_url}&title={post.title}',
-            'email': f'mailto:?subject={post.title}&body=I found this interesting post and thought you might like it: {post_url}'
+            "facebook": f"https://www.facebook.com/sharer/sharer.php?u={post_url}",
+            "twitter": f"https://twitter.com/intent/tweet?text={post.title}&url={post_url}",
+            "linkedin": f"https://www.linkedin.com/sharing/share-offsite/?url={post_url}",
+            "reddit": f"https://www.reddit.com/submit?url={post_url}&title={post.title}",
+            "email": f"mailto:?subject={post.title}&body=I found this interesting post and thought you might like it: {post_url}",
         }
 
-        return JsonResponse({
-            'post_title': post.title,
-            'post_url': post_url,
-            'share_links': share_links
-        })
+        return JsonResponse(
+            {"post_title": post.title, "post_url": post_url, "share_links": share_links}
+        )
 
     except Post.DoesNotExist:
-        return JsonResponse({'error': 'Post not found'}, status = 404)
+        return JsonResponse({"error": "Post not found"}, status = 404)

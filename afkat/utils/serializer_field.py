@@ -1,12 +1,8 @@
-# utils/serializer_fields.py
 from rest_framework import serializers
 from .image_compression import compress_image
 
 
 class CompressedImageField(serializers.ImageField):
-    """
-    A Django REST Framework Field that automatically compresses images.
-    """
 
     def __init__(self, *args, **kwargs):
         self.max_size = kwargs.pop('max_size', 1200)

@@ -1,5 +1,6 @@
 import requests
 from django.db import transaction
+from django.db.models import F
 from django.http import FileResponse
 from django.utils import timezone
 from django.utils.decorators import method_decorator
@@ -8,10 +9,10 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, permissions, status, viewsets
 from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.exceptions import PermissionDenied
-from rest_framework.generics import get_object_or_404
+from rest_framework.generics import get_object_or_404 , RetrieveAPIView
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from rest_framework.response import Response
-from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
 from urllib.parse import urlencode, quote_plus
 from django.urls import NoReverseMatch
 from django.http import HttpRequest
@@ -120,7 +121,7 @@ class GameViewSet(viewsets.ModelViewSet):
     @action(methods=["get"], detail=True, url_path="download")
     def download_game(self, request, pk=None):
         game = get_object_or_404(Game, pk=pk)
-        game.download_count += 1
+        game.download_count += F("download_count")+1
         game.save(update_fields=["download_count"])
         response = FileResponse(
             game.game_file.open("rb"), as_attachment=True, filename=game.game_file.name
@@ -233,15 +234,10 @@ class GameJamViewSet(viewsets.ModelViewSet):
         return Response({"status": "game submitted successfully"})
 
 
-# class LeaderBoardViewSet(APIView) :
-#     def get(self, request):
-#         permissions = [permissions.IsAuthenticated]
-#         response = requests.get('fakeURL')
-#         return Response(response.json())
 
 
 @api_view(["GET"])
-@permission_classes([permissions.AllowAny])
+@permission_classes([permissions.IsAuthenticated])
 def get_game_share_links(request: HttpRequest, game_pk: int):
     """
     Generates social media sharing links for a given game.
@@ -269,3 +265,13 @@ def get_game_share_links(request: HttpRequest, game_pk: int):
         )
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_404_NOT_FOUND)
+
+@api_view(["GET"])
+@permission_classes([permissions.IsAuthenticated])
+def get_leaderboard(request : HttpRequest, leaderboard_id : int  ):
+    url = f"https://afkatservice-a4fegdfndqeddhgw.uaenorth-01.azurewebsites.net/afk_services/afk_leaderboard/{leaderboard_id}"
+    response = requests.get(url)
+    response.raise_for_status()
+    return Response(response.json())
+
+

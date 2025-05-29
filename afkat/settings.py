@@ -41,14 +41,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = env("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env("DEBUG")
 
 ALLOWED_HOSTS = ["*"]
 
 AUTH_USER_MODEL = "afkat_auth.User"
 SITE_ID = 1
-LOGIN_REDIRECT_URL = "home"
-LOGOUT_REDIRECT_URL = "home"
+
+# LOGIN_REDIRECT_URL = "home"
+# LOGOUT_REDIRECT_URL = "home"
 
 LOCAL_APPS = ["afkat_home", "afkat_auth", "afkat_game", "afkat_art"]
 THIRD_PARTY_APPS = [
@@ -88,9 +89,11 @@ INSTALLED_APPS = (
 )
 
 THIRD_PARTY_MIDDLEWARE = [
-    "debug_toolbar.middleware.DebugToolbarMiddleware",
     "allauth.account.middleware.AccountMiddleware",
 ]
+if DEBUG:
+    THIRD_PARTY_MIDDLEWARE += ["django_browser_reload.middleware.BrowserReloadMiddleware",
+                               "debug_toolbar.middleware.DebugToolbarMiddleware"]
 MIDDLEWARE = [
                  "django.middleware.security.SecurityMiddleware",
                  'whitenoise.middleware.WhiteNoiseMiddleware',
@@ -185,8 +188,9 @@ USE_TZ = True
 # https://docs.djangoprojecttoject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-cache_production_on: bool = True
-if not  cache_production_on:
+
+CACHE_ON_PRODUCTION = True       #TODO dont forget to change it
+if not CACHE_ON_PRODUCTION:
     CACHES = {
         'default': {
             'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
@@ -324,6 +328,7 @@ AWS_S3_FILE_OVERWRITE = False
 AWS_DEFAULT_ACL = "public-read"
 AWS_S3_OBJECT_PARAMETERS = {
     "CacheControl": "max-age=86400",
+    "ACL": "public-read",
 }
 
 AWS_S3_CUSTOM_DOMAIN_MIME_TYPES = {
@@ -349,7 +354,8 @@ AWS_S3_CUSTOM_DOMAIN_MIME_TYPES = {
 # STATIC_LOCATION = "static"
 # STATIC_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{STATIC_LOCATION}/"
 PUBLIC_MEDIA_LOCATION = "media"
-MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{PUBLIC_MEDIA_LOCATION}/"
+# MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{PUBLIC_MEDIA_LOCATION}/"
+MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/"
 #
 # STORAGES = {
 #     "default": {

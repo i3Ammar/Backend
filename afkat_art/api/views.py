@@ -1,4 +1,5 @@
 from django.http import FileResponse
+from django.db.models import F
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
@@ -82,7 +83,7 @@ class ArtViewSet(viewsets.ModelViewSet):
     @action(methods = ["get"], detail = True, url_path = "download")
     def download_art(self, request, pk = None):
         art = get_object_or_404(ArtModel, pk = pk)
-        art.download_count += 1
+        art.download_count += F("download_count")+1
         art.save(update_fields = ["download_count"])
         response = FileResponse(
             art.model_file.open("rb"), as_attachment = True, filename = art.model_file.name

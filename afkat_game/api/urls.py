@@ -6,6 +6,7 @@ from afkat_game.api.views import (
     GameRatingViewSet,
     GameJamViewSet,
     get_game_share_links,
+    get_leaderboard,
 )
 
 router = DefaultRouter()
@@ -22,5 +23,8 @@ urlpatterns = [
         "<int:game_pk>/share/",
         get_game_share_links,
         name="game-share-links",
+    ),
+    path(
+        "leaderboard/<int:leaderboard_id>", get_leaderboard, name="leaderboard-by-id"
     ),
 ]
