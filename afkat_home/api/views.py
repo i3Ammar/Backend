@@ -41,18 +41,18 @@ class PostViewSet(viewsets.ModelViewSet):
             if self.request.user.is_anonymous:
                 queryset = self.queryset.filter(
                     published_at__lte = timezone.now()
-                ).order_by("?")
+                ).order_by("-published_at")
 
         else:
             if self.request.user.is_anonymous:
-                queryset = queryset.filter(published_at__lte = timezone.now()).order_by("?")
+                queryset = queryset.filter(published_at__lte = timezone.now()).order_by("-published_at")
 
             elif not self.request.user.is_staff:
-                queryset = queryset.order_by("?")
+                queryset = queryset.order_by("-published_at")
             else:  # Authenticated
                 queryset = queryset.filter(
                     Q(published_at__lte = timezone.now()) | Q(author = self.request.user)
-                ).order_by("?")
+                ).order_by("-published_at")
 
         if self.request.user.is_authenticated:
             user_likes = Post.likes.through.objects.filter(
