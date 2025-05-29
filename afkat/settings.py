@@ -92,8 +92,7 @@ THIRD_PARTY_MIDDLEWARE = [
     "allauth.account.middleware.AccountMiddleware",
 ]
 if DEBUG:
-    THIRD_PARTY_MIDDLEWARE += ["django_browser_reload.middleware.BrowserReloadMiddleware",
-                               "debug_toolbar.middleware.DebugToolbarMiddleware"]
+    THIRD_PARTY_MIDDLEWARE += ["debug_toolbar.middleware.DebugToolbarMiddleware"]
 MIDDLEWARE = [
                  "django.middleware.security.SecurityMiddleware",
                  'whitenoise.middleware.WhiteNoiseMiddleware',
@@ -356,6 +355,8 @@ PUBLIC_MEDIA_LOCATION = "media"
 # MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{PUBLIC_MEDIA_LOCATION}/"
 MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{PUBLIC_MEDIA_LOCATION}/"
 #
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STORAGES = {
     "default": {
         "BACKEND": "storages.backends.s3boto3.S3StaticStorage",
@@ -365,8 +366,6 @@ STORAGES = {
     },
 }
 
-STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 # STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 #FIXME
 # For Amazon S3
