@@ -1,4 +1,5 @@
-from django.urls import path, include
+import requests
+from django.urls import path, include, re_path
 from rest_framework.routers import DefaultRouter
 from afkat_game.api.views import (
     GameViewSet,
@@ -6,7 +7,7 @@ from afkat_game.api.views import (
     GameRatingViewSet,
     GameJamViewSet,
     get_game_share_links,
-    get_leaderboard,
+    AFKGatewayView,
 )
 
 router = DefaultRouter()
@@ -24,7 +25,6 @@ urlpatterns = [
         get_game_share_links,
         name="game-share-links",
     ),
-    path(
-        "leaderboard/<int:leaderboard_id>", get_leaderboard, name="leaderboard-by-id"
-    ),
+    re_path(r'^afk-service(?:/.*)?$', AFKGatewayView.as_view()),
+    # path("achivement_id/<int:achievement_id>", get_achievments,name='achivement_id_get'),  # New endpoint
 ]

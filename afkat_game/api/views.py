@@ -1,7 +1,9 @@
 import requests
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
 from django.db.models import F
-from django.http import FileResponse
+from django.http import FileResponse, HttpResponseRedirect, JsonResponse, HttpRequest, HttpResponse
+from django.views import View
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
@@ -9,13 +11,14 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, permissions, status, viewsets
 from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.exceptions import PermissionDenied
-from rest_framework.generics import get_object_or_404 , RetrieveAPIView
+from rest_framework.generics import get_object_or_404, RetrieveAPIView
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from urllib.parse import urlencode, quote_plus
 from django.urls import NoReverseMatch
 from django.http import HttpRequest
+from sentry_sdk.integrations.beam import raise_exception
 
 from afkat_game.api.serializers import (
     GameCommentSerializer,
@@ -50,7 +53,7 @@ class GameViewSet(viewsets.ModelViewSet):
     filterset_class = GameFilter
     search_fields = ["title"]
     ordering_fields = ["title", "created_at"]
-    ordering = ["?"]
+    ordering = ["-created_at"]
 
     @method_decorator(cache_page(60 * 5))
     def list(self, request, *args, **kwargs):
@@ -121,7 +124,7 @@ class GameViewSet(viewsets.ModelViewSet):
     @action(methods=["get"], detail=True, url_path="download")
     def download_game(self, request, pk=None):
         game = get_object_or_404(Game, pk=pk)
-        game.download_count += F("download_count")+1
+        game.download_count += F("download_count") + 1
         game.save(update_fields=["download_count"])
         response = FileResponse(
             game.game_file.open("rb"), as_attachment=True, filename=game.game_file.name
@@ -234,8 +237,6 @@ class GameJamViewSet(viewsets.ModelViewSet):
         return Response({"status": "game submitted successfully"})
 
 
-
-
 @api_view(["GET"])
 @permission_classes([permissions.IsAuthenticated])
 def get_game_share_links(request: HttpRequest, game_pk: int):
@@ -266,12 +267,106 @@ def get_game_share_links(request: HttpRequest, game_pk: int):
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_404_NOT_FOUND)
 
-@api_view(["GET"])
-@permission_classes([permissions.IsAuthenticated])
-def get_leaderboard(request : HttpRequest, leaderboard_id : int  ):
-    url = f"https://afkatservice-a4fegdfndqeddhgw.uaenorth-01.azurewebsites.net/afk_services/afk_leaderboard/{leaderboard_id}"
-    response = requests.get(url)
-    response.raise_for_status()
-    return Response(response.json())
+# url = "https://afkatservice-a4fegdfndqeddhgw.uaenorth-01.azurewebsites.net/afk_services/"
+# @api_view(["GET"])
+# @permission_classes([permissions.IsAuthenticated])
+# def get_achievments(request: HttpRequest, achievement_id:int):
+#     endpoint = f"/afk_achievements/{achievement_id}"
+#     try :
+#
+#         response  = requests.get(url + endpoint)
+#         response.raise_for_status()
+#         return Response(response.json())
+#     except Exception as e :
+#         return Response({"error": str(e)}, status=status.HTTP_404_NOT_FOUND)
+#
+# @api_view(["GET"])
+# @permission_classes([permissions.IsAuthenticated])
+# def get_game_achievement(request: HttpRequest, game_id:int):
+#     endpoint = f"/afk_achievements/game/{game_id}"
+#     try :
+#         response  = requests.get(url + endpoint)
+#         response.raise_for_status()
+#         return Response(response.json())
+#     except Exception as e :
+#         return Response({"error": str(e)}, status=status.HTTP_404_NOT_FOUND)
+#
+#
+# @api_view(["POST"])
+# @permission_classes([permissions.IsAuthenticated])
+# def post_achievements(request: HttpRequest,):
+#     url = f"https://afkatservice-a4fegdfndqeddhgw.uaenorth-01.azurewebsites.net/afk_services/afk_achievements/"
+#     try :
+#         response  = requests.post(url)
+#         response.raise_for_status()
+#         return Response(status = HTTP_201_CREATED)
+#     except Exception as e :
+#         return Response({"error": str(e)}, status=status.HTTP_404_NOT_FOUND)
+#
 
+class AFKGatewayView(LoginRequiredMixin, View):
+    BASE_URL = "https://afkatservice-a4fegdfndqeddhgw.uaenorth-01.azurewebsites.net"
+    login_url = '/api/v1/auth/login/'
 
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return self.handle_no_permission()
+
+        forward_path = request.path.replace("/api/v1/games/afk-service", "", 1)
+
+        if not forward_path:
+            forward_path = "/"
+        elif not forward_path.startswith('/'):
+            forward_path = '/' + forward_path
+
+        url = f"{self.BASE_URL}{forward_path}"
+        headers = {k: v for k, v in request.headers.items() if k.lower() != "host"}
+
+        if 'Authorization' not in headers and request.user.is_authenticated:
+            pass
+
+        try:
+
+            headers["Host"] = "afkatservice-a4fegdfndqeddhgw.uaenorth-01.azurewebsites.net"
+            headers.pop("Content-Length", None)
+            response = requests.request(
+                method=request.method,
+                url=url,
+                headers=headers,
+                data=request.body,
+                params=request.GET,
+                cookies=request.COOKIES,
+                timeout=10,
+                allow_redirects=False,
+                stream = True,
+            )
+
+            django_response = HttpResponse(
+                content=response.content,
+                status=response.status_code,
+                content_type=response.headers.get("Content-Type", "application/json")
+            )
+
+            hop_by_hop_headers = {
+                'connection', 'keep-alive', 'proxy-authenticate', 'proxy-authorization',
+                'te', 'trailers', 'transfer-encoding', 'upgrade'
+            }
+
+            for header, value in response.headers.items():
+                if header.lower() not in hop_by_hop_headers | {'content-length', 'content-encoding'}:
+                    django_response[header] = value
+
+            # print("Forwarding to URL:", url)
+            # print("Headers:", headers)
+            # print("Method:", request.method)
+            # print("Params:", request.GET)
+            # print("Response status:", response.status_code)
+            # print("Response body:", response.text[:500])
+
+            return django_response
+
+        except requests.exceptions.RequestException as e:
+            return JsonResponse(
+                {"error": "AFK service unavailable", "details": str(e)},
+                status=502
+            )

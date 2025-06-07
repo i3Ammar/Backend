@@ -1,5 +1,414 @@
 {
+  "tabnine.experimentalAutoImports": true,
+  "github.copilot.enable": {
+    "*": true,
+    "plaintext": false,
+    "markdown": false,
+    "scminput": false,
+    "cpp": false
+  },
+  "bracket-pair-colorizer-2.depreciation-notice": false,
+  "remote.SSH.defaultExtensions": ["gitpod.gitpod-remote-ssh"],
+  "remote.SSH.remotePlatform": {
+    "techwithtim-neatflappyb-p1bcnahdp6d.ssh.ws-us97.gitpod.io": "linux",
+    "*.gitpod.io": "linux"
+  },
+  "window.commandCenter": true,
+  "settingsSync.ignoredSettings": ["-python.defaultInterpreterPath"],
+  "python.defaultInterpreterPath": "C:\\Users\\ammar\\AppData\\Local\\Microsoft\\WindowsApps\\python3.12.exe",
+  "cmake.configureOnOpen": true,
+  "lldb.suppressUpdateNotifications": true,
+  "diffEditor.ignoreTrimWhitespace": false,
+  "security.workspace.trust.untrustedFiles": "open",
+  "livePreview.notifyOnOpenLooseFile": false,
+  "workbench.editorAssociations": {
+    "*.png": "imagePreview.previewEditor"
+  },
+  "workbench.iconTheme": "material-icon-theme",
+  "code-runner.runInTerminal": true,
+  "code-runner.languageIdToFileExtensionMap": {
+    "bat": ".bat",
+    "powershell": ".ps1",
+    "typescript": ".ts"
+  },
+  "code-runner.executorMap": {
+    "javascript": "node",
+    "java": "cd $dir && javac $fileName && java $fileNameWithoutExt",
+    "c": "cd $dir && gcc $fileName -o $fileNameWithoutExt && $dir$fileNameWithoutExt",
+    "zig": "zig run",
+    "cpp": "cd $dir && g++ $fileName -o $fileNameWithoutExt && $dir$fileNameWithoutExt",
+    "objective-c": "cd $dir && gcc -framework Cocoa $fileName -o $fileNameWithoutExt && $dir$fileNameWithoutExt",
+    "php": "php",
+    "python": "python -u",
+    "perl": "perl",
+    "perl6": "perl6",
+    "ruby": "ruby",
+    "go": "go run",
+    "lua": "lua",
+    "groovy": "groovy",
+    "powershell": "powershell -ExecutionPolicy ByPass -File",
+    "bat": "cmd /c",
+    "shellscript": "bash",
+    "fsharp": "fsi",
+    "csharp": "scriptcs",
+    "vbscript": "cscript //Nologo",
+    "typescript": "ts-node",
+    "coffeescript": "coffee",
+    "scala": "scala",
+    "swift": "swift",
+    "julia": "julia",
+    "crystal": "crystal",
+    "ocaml": "ocaml",
+    "r": "Rscript",
+    "applescript": "osascript",
+    "clojure": "lein exec",
+    "haxe": "haxe --cwd $dirWithoutTrailingSlash --run $fileNameWithoutExt",
+    "rust": "cd $dir && rustc $fileName && $dir$fileNameWithoutExt",
+    "racket": "racket",
+    "scheme": "csi -script",
+    "ahk": "autohotkey",
+    "autoit": "autoit3",
+    "dart": "dart",
+    "pascal": "cd $dir && fpc $fileName && $dir$fileNameWithoutExt",
+    "d": "cd $dir && dmd $fileName && $dir$fileNameWithoutExt",
+    "haskell": "runghc",
+    "nim": "nim compile --verbosity:0 --hints:off --run",
+    "lisp": "sbcl --script",
+    "kit": "kitc --run",
+    "v": "v run",
+    "sass": "sass --style expanded",
+    "scss": "scss --style expanded",
+    "less": "cd $dir && lessc $fileName $fileNameWithoutExt.css",
+    "FortranFreeForm": "cd $dir && gfortran $fileName -o $fileNameWithoutExt && $dir$fileNameWithoutExt",
+    "fortran-modern": "cd $dir && gfortran $fileName -o $fileNameWithoutExt && $dir$fileNameWithoutExt",
+    "fortran_fixed-form": "cd $dir && gfortran $fileName -o $fileNameWithoutExt && $dir$fileNameWithoutExt",
+    "fortran": "cd $dir && gfortran $fileName -o $fileNameWithoutExt && $dir$fileNameWithoutExt",
+    "sml": "cd $dir && sml $fileName",
+    "mojo": "mojo run"
+  },
+  "cmake.showOptionsMovedNotification": false,
+  "code-runner.executorMapByFileExtension": {
+    ".vb": "cd $dir && vbc /nologo $fileName && $dir$fileNameWithoutExt",
+    ".vbs": "cscript //Nologo",
+    ".scala": "scala",
+    ".jl": "julia",
+    ".cr": "crystal",
+    ".ml": "ocaml",
+    ".zig": "zig run",
+    ".exs": "elixir",
+    ".hx": "haxe --cwd $dirWithoutTrailingSlash --run $fileNameWithoutExt",
+    ".rkt": "racket",
+    ".scm": "csi -script",
+    ".ahk": "autohotkey",
+    ".au3": "autoit3",
+    ".kt": "cd $dir && kotlinc $fileName -include-runtime -d $fileNameWithoutExt.jar && java -jar $fileNameWithoutExt.jar",
+    ".kts": "kotlinc -script",
+    ".dart": "dart",
+    ".pas": "cd $dir && fpc $fileName && $dir$fileNameWithoutExt",
+    ".pp": "cd $dir && fpc $fileName && $dir$fileNameWithoutExt",
+    ".d": "cd $dir && dmd $fileName && $dir$fileNameWithoutExt",
+    ".hs": "runhaskell",
+    ".nim": "nim compile --verbosity:0 --hints:off --run",
+    ".csproj": "dotnet run --project",
+    ".fsproj": "dotnet run --project",
+    ".lisp": "sbcl --script",
+    ".kit": "kitc --run",
+    ".v": "v run",
+    ".vsh": "v run",
+    ".sass": "sass --style expanded",
+    ".cu": "cd $dir && nvcc $fileName -o $fileNameWithoutExt && $dir$fileNameWithoutExt",
+    ".ring": "ring",
+    ".sml": "cd $dir && sml $fileName",
+    ".mojo": "mojo run"
+  },
+  "code-runner.executorMapByGlob": {
+    "pom.xml": "cd $dir && mvn clean package"
+  },
+  "code-runner.clearPreviousOutput": true,
+  "workbench.settings.applyToAllProfiles": ["code-runner.clearPreviousOutput"],
+  "git.autofetch": true,
+  "window.zoomLevel": -1,
+  "python.autoComplete.extraPaths": [],
+  "vscode-pets.theme": "forest",
+  "vscode-pets.throwBallWithMouse": true,
+  "vscode-pets.petSize": "small",
+  "python.analysis.extraPaths": [],
+  "files.autoSave": "onFocusChange",
+  "files.autoSaveWhenNoErrors": true,
+  "explorer.confirmPasteNative": false,
+  "gitlens.advanced.messages": {
+    "suppressCreatePullRequestPrompt": true
+  },
+  "editor.wordWrap": "on",
+  "editor.formatOnSave": true,
+  "html.format.unformatted": "",
+  "vim.useSystemClipboard": true,
+  "hediet.vscode-drawio.resizeImages": null,
+  "powermode.enabled": true,
+  "git.openRepositoryInParentFolders": "never",
+  "cursor.cpp.disabledLanguages": [
+    "plaintext",
+    "markdown",
+    "scminput",
+    "cpp"
+  ],
+  "vim.easymotion": true,
+  "vim.normalModeKeyBindings": [
+  
+  ],
+  "vim.visualModeKeyBindings": [],
+  "vim.smartRelativeLine": true,
+  "vim.useCtrlKeys": true,
+  "vim.handleKeys": {
+    "<C-d>": true,
+    "<C-u>": true,
+    "<C-f>": true,
+    "<C-b>": true 
+  },
+    // Core Vim settings
+    "vim.leader": " ",
+    "vim.hlsearch": true,
+    "vim.incsearch": true,
+    "vim.ignorecase": true,
+    "vim.smartcase": true,
+    "vim.visualbell": true,
+    "vim.showmodename": true,
+    "vim.showcmd": true,
+    "vim.surround": true,
+    "vim.highlightedyank": true,
+    "vim.sneak": true,
+    "vim.argumentObjectEnabled": true,
+    "vim.scroll": 10,
+    "vim.replaceWithRegister": true,
+    "vim.statusBarColorControl": false,
+    "vim.statusBarColors": {
+        "normal": "#41ead4",
+        "insert": "#f335b2",
+        "visual": "#B48EAD",
+        "visualline": "#B48EAD",
+        "visualblock": "#B48EAD",
+        "replace": "#D08770"
+    },
+    "vim.relativenumber": true,
+    "editor.lineNumbers": "relative",
+    "editor.cursorSurroundingLines": 10,
+    "editor.autoIndent": "full",
+    "editor.tabSize": 4,
+    
+    // Plugin settings
+    "vim.quickScopeStyle": {
+        "active": "underline",
+        "activeCommandColor": "#ff0000",
+        "activeTextColor": "#ffffff"
+    },
+    "vim.camelCaseMotion.enable": true,
+    "vim.enableNeovim": true,
+    
+    // Insert mode mappings
+    "vim.insertModeKeyBindings": [
+        {
+            "before": ["j", "k"],
+            "after": ["<Esc>"]
+        }
+    ],
+    
+    // Normal mode mappings
+    "vim.normalModeKeyBindingsNonRecursive": [
+        // Tab navigation
+        {
+            "before": ["<A-n>"],
+            "commands": ["workbench.action.nextEditor"]
+        },
+        {
+            "before": ["<A-p>"],
+            "commands": ["workbench.action.previousEditor"]
+        },
+        // Pane navigation
+        {
+            "before": ["<A-h>"],
+            "commands": ["workbench.action.navigateLeft"]
+        },
+        {
+            "before": ["<A-l>"],
+            "commands": ["workbench.action.navigateRight"]
+        },
+        {
+            "before": ["<A-k>"],
+            "commands": ["workbench.action.navigateUp"]
+        },
+        {
+            "before": ["<A-j>"],
+            "commands": ["workbench.action.navigateDown"]
+        },
+        // Method navigation
+        {
+            "before": ["]", "]"],
+            "commands": ["editor.action.goToNextMethod"]
+        },
+        // Folding
+        {
+            "before": ["leader", "z", "c"],
+            "commands": ["editor.foldAll"]
+        },
+        {
+            "before": ["leader", "z", "o"],
+            "commands": ["editor.unfoldAll"]
+        },
+        // File navigation
+        {
+            "before": ["leader", "f", "f"],
+            "commands": ["workbench.action.quickOpen"]
+        },
+        {
+            "before": ["leader", "f", "r"],
+            "commands": ["workbench.action.openRecent"]
+        },
+        {
+            "before": ["leader", "f", "c"],
+            "commands": ["workbench.action.findInFiles"]
+        },
+        {
+            "before": ["leader", "leader"],
+            "commands": ["workbench.action.openRecent"]
+        },
+        // Close active tab
+        {
+            "before": ["leader", "q"],
+            "commands": ["workbench.action.closeActiveEditor"]
+        },
+        // Refactoring
+        {
+            "before": ["leader", "r", "n"],
+            "commands": ["editor.action.rename"]
+        },
+        {
+            "before": ["leader", "r", "r"],
+            "commands": ["editor.action.refactor"]
+        },
+        // Go to code
+        {
+            "before": ["leader", "g", "d"],
+            "commands": ["editor.action.revealDefinition"]
+        },
+        {
+            "before": ["leader", "g", "y"],
+            "commands": ["editor.action.goToTypeDefinition"]
+        },
+        {
+            "before": ["leader", "g", "i"],
+            "commands": ["editor.action.goToImplementation"]
+        },
+        {
+            "before": ["leader", "g", "u"],
+            "commands": ["references-view.findReferences"]
+        },
+        {
+            "before": ["leader", "g", "b"],
+            "commands": ["workbench.action.navigateBack"]
+        },
+        {
+            "before": ["leader", "g", "f"],
+            "commands": ["workbench.action.navigateForward"]
+        },
+        // Git windows
+        {
+            "before": ["leader", "g", "c"],
+            "commands": ["git.commitAll"]
+        },
+        {
+            "before": ["leader", "g", "s"],
+            "commands": ["workbench.view.scm"]
+        },
+        {
+            "before": ["leader", "g", "b"],
+            "commands": ["git.checkout"]
+        },
+        // Errors
+        {
+            "before": ["leader", "e", "n"],
+            "commands": ["editor.action.marker.next"]
+        },
+        {
+            "before": ["leader", "e", "p"],
+            "commands": ["editor.action.marker.prev"]
+        },
+        // Comment lines
+        {
+            "before": ["leader", "c"],
+            "commands": ["editor.action.commentLine"]
+        },
+        // Display options
+        {
+            "before": ["leader", "d", "d"],
+            "commands": ["workbench.action.toggleCenteredLayout"]
+        },
+        {
+            "before": ["leader", "d", "z"],
+            "commands": ["workbench.action.toggleZenMode"]
+        },
+        {
+            "before": ["leader", "d", "f"],
+            "commands": ["workbench.action.toggleFullScreen"]
+        },
+        // Window splits
+        {
+            "before": ["leader", "w", "v"],
+            "commands": ["workbench.action.splitEditorRight"]
+        },
+        {
+            "before": ["leader", "w", "s"],
+            "commands": ["workbench.action.splitEditorDown"]
+        },
+        {
+            "before": ["leader", "w", "u"],
+            "commands": ["workbench.action.joinAllGroups"]
+        },
+        {
+            "before": ["leader", "w", "m"],
+            "commands": ["workbench.action.moveEditorToNextGroup"]
+        },
+        // Jump with easymotion
+        {
+            "before": ["leader", "j"],
+            "after": ["<leader>", "<leader>", "s"]
+        },
+        // File explorer
+        {
+            "before": ["leader", "x"],
+            "commands": ["workbench.view.explorer"]
+        }
+    ],
+    
+    // Visual mode mappings
+    "vim.visualModeKeyBindingsNonRecursive": [
+        {
+            "before": ["<"],
+            "commands": ["editor.action.outdentLines"]
+        },
+        {
+            "before": [">"],
+            "commands": ["editor.action.indentLines"]
+        },
+        {
+            "before": ["leader", "c"],
+            "commands": ["editor.action.commentLine"]
+        }
+    ],
+    
+    // Add multi-cursor support
+    "vim.multicursorModifier": "alt",
+    "editor.multiCursorModifier": "alt",
+    
+    // Command & search which-key settings
+    "vim.whichKeyShowDelay": 100,
+    
+    // For NERDTree-like functionality
+    "explorer.confirmDelete": false,
+    "explorer.confirmDragAndDrop": false,
     "cSpell.ignoreWords": [
-        "afkat"
+        "allauth"
     ]
 }
+
+
+

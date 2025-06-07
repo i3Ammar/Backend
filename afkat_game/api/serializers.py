@@ -50,7 +50,7 @@ class GameDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Game
-        fields = ['id', 'user_id', 'username', 'title', 'description', 'user_rating', 'tags',
+        fields = ['id', 'user_id', 'username', 'title', 'description', 'user_rating', 'tags','created_at','updated_at',
                   'download_count', 'rating', 'thumbnail', "game_file", 'game_file_win', 'webgl_index_path', ]
         read_only_fields = ['user_id','username', 'download_count', 'created_at', 'updated_at', 'webgl_index_path']
         extra_kwargs = {

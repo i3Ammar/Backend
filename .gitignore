@@ -4,6 +4,7 @@ integration_testing_guide.md
 private_key.pem
 public_key.pem
 TODO.md
+.vscode
 ### Django ###
 *.log
 *.pot

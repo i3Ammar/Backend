@@ -140,6 +140,7 @@ DATABASES = {
     # 'default': {
     #     'ENGINE': 'django.db.backends.sqlite3',
     #     'NAME': BASE_DIR / 'db.sqlite3',
+    # }
     # 'default': dj_database_url.config(
     #     default = 'postgres://postgres:' + env("DB_PASSWORD") + '@localhost:5432/afkat',
     #     conn_max_age = 600,
@@ -150,6 +151,7 @@ DATABASES = {
         "CONN_MAX_AGE": 600,
         "CONN_HEALTH_CHECKS": True,
     }
+
 }
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -220,7 +222,7 @@ DEBUG_TOOLBAR_CONFIG = {
 }
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework.authentication.SessionAuthentication",
+        # "rest_framework.authentication.SessionAuthentication",
         "rest_framework_simplejwt.authentication.JWTAuthentication",
         "dj_rest_auth.jwt_auth.JWTCookieAuthentication",
     ],
@@ -354,7 +356,7 @@ AWS_S3_CUSTOM_DOMAIN_MIME_TYPES = {
 PUBLIC_MEDIA_LOCATION = "media"
 # MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{PUBLIC_MEDIA_LOCATION}/"
 MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{PUBLIC_MEDIA_LOCATION}/"
-#
+
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STORAGES = {
@@ -365,12 +367,6 @@ STORAGES = {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
 }
-
-# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-#FIXME
-# For Amazon S3
-# DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-
 
 WHITENOISE_MAX_AGE = 31536000
 WHITENOISE_KEEP_ONLY_HASHED_FILES = True
