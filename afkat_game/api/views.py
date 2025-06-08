@@ -267,29 +267,29 @@ def get_game_share_links(request: HttpRequest, game_pk: int):
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_404_NOT_FOUND)
 
-# url = "https://afkatservice-a4fegdfndqeddhgw.uaenorth-01.azurewebsites.net/afk_services/"
-# @api_view(["GET"])
-# @permission_classes([permissions.IsAuthenticated])
-# def get_achievments(request: HttpRequest, achievement_id:int):
-#     endpoint = f"/afk_achievements/{achievement_id}"
-#     try :
+url = "https://afkatservice-a4fegdfndqeddhgw.uaenorth-01.azurewebsites.net/afk_services/"
+@api_view(["GET"])
+@permission_classes([permissions.IsAuthenticated])
+def get_achievments(request: HttpRequest, achievement_id:int):
+    endpoint = f"/afk_achievements/{achievement_id}"
+    try :
+
+        response  = requests.get(url + endpoint)
+        response.raise_for_status()
+        return Response(response.json())
+    except Exception as e :
+        return Response({"error": str(e)}, status=status.HTTP_404_NOT_FOUND)
 #
-#         response  = requests.get(url + endpoint)
-#         response.raise_for_status()
-#         return Response(response.json())
-#     except Exception as e :
-#         return Response({"error": str(e)}, status=status.HTTP_404_NOT_FOUND)
-#
-# @api_view(["GET"])
-# @permission_classes([permissions.IsAuthenticated])
-# def get_game_achievement(request: HttpRequest, game_id:int):
-#     endpoint = f"/afk_achievements/game/{game_id}"
-#     try :
-#         response  = requests.get(url + endpoint)
-#         response.raise_for_status()
-#         return Response(response.json())
-#     except Exception as e :
-#         return Response({"error": str(e)}, status=status.HTTP_404_NOT_FOUND)
+@api_view(["GET"])
+@permission_classes([permissions.IsAuthenticated])
+def get_game_achievement(request: HttpRequest, game_id:int):
+    endpoint = f"/afk_achievements/game/{game_id}"
+    try :
+        response  = requests.get(url + endpoint)
+        response.raise_for_status()
+        return Response(response.json())
+    except Exception as e :
+        return Response({"error": str(e)}, status=status.HTTP_404_NOT_FOUND)
 #
 #
 # @api_view(["POST"])
@@ -306,11 +306,11 @@ def get_game_share_links(request: HttpRequest, game_pk: int):
 
 class AFKGatewayView(LoginRequiredMixin, View):
     BASE_URL = "https://afkatservice-a4fegdfndqeddhgw.uaenorth-01.azurewebsites.net"
-    login_url = '/api/v1/auth/login/'
+    # login_url = '/api/v1/auth/login/'
 
     def dispatch(self, request, *args, **kwargs):
-        if not request.user.is_authenticated:
-            return self.handle_no_permission()
+        # if not request.user.is_authenticated:
+        #     return self.handle_no_permission()
 
         forward_path = request.path.replace("/api/v1/games/afk-service", "", 1)
 
@@ -337,7 +337,7 @@ class AFKGatewayView(LoginRequiredMixin, View):
                 params=request.GET,
                 cookies=request.COOKIES,
                 timeout=10,
-                allow_redirects=False,
+                allow_redirects=True,
                 stream = True,
             )
 
