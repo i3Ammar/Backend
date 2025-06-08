@@ -310,7 +310,7 @@ class AFKGatewayView(LoginRequiredMixin, View):
 
     def dispatch(self, request, *args, **kwargs):
         # if not request.user.is_authenticated:
-        #     return self.handle_no_permission()
+        #     return self.handle_no_permission()  .
 
         forward_path = request.path.replace("/api/v1/games/afk-service", "", 1)
 
