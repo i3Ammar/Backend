@@ -3,7 +3,6 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 
 
-# Create your models here.
 class TagsModel(models.Model):
     value = models.TextField(max_length = 20, unique = True)
 

@@ -14,14 +14,12 @@ User = get_user_model()
 
 class PostModelTests(TestCase):
     def setUp(self):
-        # Create a test user
         self.user = User.objects.create_user(
             username='testuser',
             email='test@example.com',
             password='StrongPassword123!'
         )
 
-        # Create a test post
         self.post = Post.objects.create(
             title='Test Post',
             slug='test-post',
@@ -32,7 +30,6 @@ class PostModelTests(TestCase):
         )
 
     def test_post_creation(self):
-        """Test that a post can be created"""
         self.assertEqual(self.post.title, 'Test Post')
         self.assertEqual(self.post.slug, 'test-post')
         self.assertEqual(self.post.summary, 'Test Summary')
@@ -41,12 +38,9 @@ class PostModelTests(TestCase):
         self.assertIsNotNone(self.post.published_at)
 
     def test_post_string_representation(self):
-        """Test the string representation of a post"""
         self.assertEqual(str(self.post), 'Test Post')
 
     def test_post_ordering(self):
-        """Test that posts are ordered by published_at in descending order"""
-        # Create a post with an earlier published_at
         earlier_post = Post.objects.create(
             title='Earlier Post',
             slug='earlier-post',
@@ -56,7 +50,6 @@ class PostModelTests(TestCase):
             published_at=timezone.now() - timezone.timedelta(days=1)
         )
 
-        # Create a post with a later published_at
         later_post = Post.objects.create(
             title='Later Post',
             slug='later-post',
@@ -67,12 +60,11 @@ class PostModelTests(TestCase):
         )
 
         posts = Post.objects.all()
-        self.assertEqual(posts[0], later_post)  # Latest first
+        self.assertEqual(posts[0], later_post)
         self.assertEqual(posts[1], self.post)
         self.assertEqual(posts[2], earlier_post)
 
     def test_post_slug_generation(self):
-        """Test that a slug is automatically generated"""
         post = Post.objects.create(
             title='Auto Slug Test',
             summary='Auto Slug Summary',
@@ -84,36 +76,30 @@ class PostModelTests(TestCase):
         self.assertEqual(post.slug, 'auto-slug-test')
 
     def test_post_unique_slug(self):
-        """Test that slugs are unique"""
-        # Create a post with the same title
         post2 = Post.objects.create(
-            title='Test Post',  # Same title as self.post
+            title='Test Post',
             summary='Another Summary',
             content='Another Content',
             author=self.user,
             published_at=timezone.now()
         )
 
-        # Slug should be different
         self.assertNotEqual(post2.slug, self.post.slug)
         self.assertTrue(post2.slug.startswith('test-post-'))
 
     def test_post_absolute_url(self):
-        """Test the absolute URL of a post"""
         expected_url = reverse('afkat_home_api:post-detail', kwargs={'pk': self.post.pk})
         self.assertEqual(self.post.get_absolute_url(), expected_url)
 
 
 class CommentModelTests(TestCase):
     def setUp(self):
-        # Create a test user
         self.user = User.objects.create_user(
             username='testuser',
             email='test@example.com',
             password='StrongPassword123!'
         )
 
-        # Create a test post
         self.post = Post.objects.create(
             title='Test Post',
             slug='test-post',
@@ -123,7 +109,6 @@ class CommentModelTests(TestCase):
             published_at=timezone.now()
         )
 
-        # Create a test comment
         self.comment = Comment.objects.create(
             creator=self.user,
             content='Test Comment',
@@ -131,14 +116,11 @@ class CommentModelTests(TestCase):
         )
 
     def test_comment_creation(self):
-        """Test that a comment can be created"""
         self.assertEqual(self.comment.content, 'Test Comment')
         self.assertEqual(self.comment.creator, self.user)
         self.assertEqual(self.comment.content_object, self.post)
 
     def test_comment_on_post(self):
-        """Test that a comment can be associated with a post"""
-        # Get comments from the post
         post_comments = self.post.comments.all()
 
         self.assertEqual(post_comments.count(), 1)
@@ -147,10 +129,8 @@ class CommentModelTests(TestCase):
 
 class PostAPITests(TestCase):
     def setUp(self):
-        # Create a test client
         self.client = APIClient()
 
-        # Create test users
         self.user = User.objects.create_user(
             username='testuser',
             email='test@example.com',
@@ -164,7 +144,6 @@ class PostAPITests(TestCase):
             is_staff=True
         )
 
-        # Create a test post
         self.post = Post.objects.create(
             title='Test Post',
             slug='test-post',
@@ -174,12 +153,10 @@ class PostAPITests(TestCase):
             published_at=timezone.now()
         )
 
-        # Create a test image
         self.temp_file = tempfile.NamedTemporaryFile(suffix='.jpg')
         self.temp_file.write(b'test content')
         self.temp_file.seek(0)
 
-        # Define API endpoints
         self.post_list_url = reverse('post-list')
         self.post_detail_url = reverse('post-detail', args=[self.post.id])
         self.post_mine_url = reverse('post-mine')
@@ -187,28 +164,23 @@ class PostAPITests(TestCase):
         self.post_like_url = reverse('post-like', args=[self.post.id])
 
     def tearDown(self):
-        # Clean up temporary files
         self.temp_file.close()
 
-        # Clean up uploaded files
         if self.post.image:
             if os.path.isfile(self.post.image.path):
                 os.remove(self.post.image.path)
 
     def test_list_posts(self):
-        """Test retrieving a list of posts"""
         response = self.client.get(self.post_list_url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data['results']), 1)
 
     def test_retrieve_post(self):
-        """Test retrieving a single post"""
         response = self.client.get(self.post_detail_url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['title'], 'Test Post')
 
     def test_create_post_authenticated(self):
-        """Test creating a post when authenticated"""
         self.client.force_authenticate(user=self.user)
 
         data = {
@@ -225,7 +197,6 @@ class PostAPITests(TestCase):
         self.assertEqual(Post.objects.last().title, 'New Test Post')
 
     def test_create_post_unauthenticated(self):
-        """Test creating a post when unauthenticated"""
         data = {
             'title': 'New Test Post',
             'summary': 'New Test Summary',
@@ -239,7 +210,6 @@ class PostAPITests(TestCase):
         self.assertEqual(Post.objects.count(), 1)
 
     def test_update_post_owner(self):
-        """Test updating a post by its owner"""
         self.client.force_authenticate(user=self.user)
 
         data = {
@@ -256,8 +226,6 @@ class PostAPITests(TestCase):
         self.assertEqual(self.post.title, 'Updated Test Post')
 
     def test_update_post_non_owner(self):
-        """Test updating a post by a non-owner"""
-        # Create another user
         other_user = User.objects.create_user(
             username='otheruser',
             email='other@example.com',
@@ -277,10 +245,9 @@ class PostAPITests(TestCase):
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.post.refresh_from_db()
-        self.assertEqual(self.post.title, 'Test Post')  # Title should not change
+        self.assertEqual(self.post.title, 'Test Post')
 
     def test_delete_post_owner(self):
-        """Test deleting a post by its owner"""
         self.client.force_authenticate(user=self.user)
 
         response = self.client.delete(self.post_detail_url)
@@ -289,8 +256,6 @@ class PostAPITests(TestCase):
         self.assertEqual(Post.objects.count(), 0)
 
     def test_delete_post_non_owner(self):
-        """Test deleting a post by a non-owner"""
-        # Create another user
         other_user = User.objects.create_user(
             username='otheruser',
             email='other@example.com',
@@ -305,10 +270,8 @@ class PostAPITests(TestCase):
         self.assertEqual(Post.objects.count(), 1)
 
     def test_mine_posts(self):
-        """Test retrieving posts by the logged-in user"""
         self.client.force_authenticate(user=self.user)
 
-        # Create another post by the same user
         Post.objects.create(
             title='Another Test Post',
             slug='another-test-post',
@@ -318,7 +281,6 @@ class PostAPITests(TestCase):
             published_at=timezone.now()
         )
 
-        # Create a post by another user
         other_user = User.objects.create_user(
             username='otheruser',
             email='other@example.com',
@@ -337,16 +299,14 @@ class PostAPITests(TestCase):
         response = self.client.get(self.post_mine_url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data['results']), 2)  # Only posts by the logged-in user
+        self.assertEqual(len(response.data['results']), 2)
 
     def test_mine_posts_unauthenticated(self):
-        """Test retrieving posts by the logged-in user when unauthenticated"""
         response = self.client.get(self.post_mine_url)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_like_post(self):
-        """Test liking a post"""
         self.client.force_authenticate(user=self.user)
 
         response = self.client.post(self.post_like_url)
@@ -355,15 +315,12 @@ class PostAPITests(TestCase):
         self.assertTrue(response.data['liked'])
         self.assertEqual(response.data['likes_count'], 1)
 
-        # Check that the post has the user in its likes
         self.post.refresh_from_db()
         self.assertTrue(self.post.likes.filter(id=self.user.id).exists())
 
     def test_unlike_post(self):
-        """Test unliking a post"""
         self.client.force_authenticate(user=self.user)
 
-        # Like the post first
         self.post.likes.add(self.user)
 
         response = self.client.post(self.post_like_url)
@@ -372,6 +329,5 @@ class PostAPITests(TestCase):
         self.assertFalse(response.data['liked'])
         self.assertEqual(response.data['likes_count'], 0)
 
-        # Check that the post doesn't have the user in its likes
         self.post.refresh_from_db()
         self.assertFalse(self.post.likes.filter(id=self.user.id).exists())

@@ -63,9 +63,29 @@ class GameViewSet(viewsets.ModelViewSet):
     def retrieve(self, request, *args, **kwargs):
         return super().retrieve(request, *args, **kwargs)
 
+    def perform_update(self, serializer):
+        instance = self.get_object()
+
+        if 'thumbnail' in serializer.validated_data:
+            validate_cover_image(self, serializer.validated_data["thumbnail"])
+
+        if 'game_file_win' in serializer.validated_data:
+            validate_game_file(self, serializer.validated_data["game_file_win"])
+
+        if 'game_file' in serializer.validated_data:
+            validate_game_file(self, serializer.validated_data["game_file"])
+            if instance.game_file != serializer.validated_data["game_file"]:
+                relative_path = process_webgl_upload(
+                    serializer.validated_data["game_file"], instance.id
+                )
+                serializer.save(webgl_index_path = relative_path)
+                return
+
+        serializer.save()
     @transaction.atomic
     def perform_create(self, serializer):
         validate_cover_image(self, serializer.validated_data["thumbnail"])
+        validate_game_file(self, serializer.validated_data["game_file_win"])
         validate_game_file(self, serializer.validated_data["game_file"])
         game = serializer.save(creator=self.request.user)
         # serializer.save()
@@ -305,7 +325,7 @@ def get_game_achievement(request: HttpRequest, game_id:int):
 #
 
 class AFKGatewayView(LoginRequiredMixin, View):
-    BASE_URL = "https://afkatservice-a4fegdfndqeddhgw.uaenorth-01.azurewebsites.net"
+    BASE_URL = "https://afkat-f8cfgpgrhkencybn.israelcentral-01.azurewebsites.net"
     # login_url = '/api/v1/auth/login/'
 
     def dispatch(self, request, *args, **kwargs):
@@ -327,7 +347,7 @@ class AFKGatewayView(LoginRequiredMixin, View):
 
         try:
 
-            headers["Host"] = "afkatservice-a4fegdfndqeddhgw.uaenorth-01.azurewebsites.net"
+            headers["Host"] = "afkat-f8cfgpgrhkencybn.israelcentral-01.azurewebsites.net"
             headers.pop("Content-Length", None)
             response = requests.request(
                 method=request.method,

@@ -14,19 +14,19 @@ import os
 from datetime import timedelta
 from pathlib import Path
 
-# import sentry_sdk
-# from sentry_sdk.integrations.django import DjangoIntegration
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
 import django_heroku
 import environ
 
-# sentry_sdk.init(
-#     dsn = "https://d8f1bd59fec9bf8736045bc9feae82c0@o4509159271301120.ingest.de.sentry.io/4509159313047632",
-#     # Add data like request headers and IP for users,
-#     # see https://docs.sentry.io/platforms/python/data-management/data-collected/ for more info
-#     integrations = [DjangoIntegration()],
-#     send_default_pii = True,
-#     traces_sample_rate = 1.0,
-# )
+sentry_sdk.init(
+    dsn = "https://d8f1bd59fec9bf8736045bc9feae82c0@o4509159271301120.ingest.de.sentry.io/4509159313047632",
+    # Add data like request headers and IP for users,
+    # see https://docs.sentry.io/platforms/python/data-management/data-collected/ for more info
+    integrations = [DjangoIntegration()],
+    send_default_pii = True,
+    traces_sample_rate = 1.0,
+)
 
 env = environ.Env()
 environ.Env.read_env()
@@ -141,16 +141,16 @@ DATABASES = {
     #     'ENGINE': 'django.db.backends.sqlite3',
     #     'NAME': BASE_DIR / 'db.sqlite3',
     # }
-    # 'default': dj_database_url.config(
-    #     default = 'postgres://postgres:' + env("DB_PASSWORD") + '@localhost:5432/afkat',
-    #     conn_max_age = 600,
-    #     conn_health_checks = True,
-    # )
     "default": {
         **env.db(),
         "CONN_MAX_AGE": 600,
         "CONN_HEALTH_CHECKS": True,
     }
+    # 'default': dj_database_url.config(
+    #     default = 'postgres://postgres:' + env("DB_PASSWORD") + '@localhost:5432/afkat',
+    #     conn_max_age = 600,
+    #     conn_health_checks = True,
+    # )
 
 }
 # Password validation
