@@ -190,11 +190,9 @@ class GameJamViewSet(viewsets.ModelViewSet):
     serializer_class = GameJamSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
-    @method_decorator(cache_page(60 * 5))
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
 
-    @method_decorator(cache_page(60 * 15))
     def retrieve(self, request, *args, **kwargs):
         return super().retrieve(request, *args, **kwargs)
 
@@ -236,7 +234,7 @@ class GameJamViewSet(viewsets.ModelViewSet):
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @method_decorator(cache_page(60 * 10))
+
     @action(detail=True, methods=["get"])
     def participants(self, request, pk=None):
         game_jam = self.get_object()
