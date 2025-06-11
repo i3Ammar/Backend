@@ -106,7 +106,7 @@ class PostViewSet(viewsets.ModelViewSet):
 
     @action(detail = True, methods = ["post"], permission_classes = [IsAuthenticated])
     def like(self, request, pk = None):
-        post = self.get_object().prefetch_related("likes")
+        post = self.get_object()
         user = request.user
 
         if post.likes.filter(id = user.id).exists():
