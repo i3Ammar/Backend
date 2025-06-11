@@ -11,11 +11,12 @@ User = get_user_model()
 
 class GameCommentSerializer(serializers.ModelSerializer):
     username = serializers.ReadOnlyField(source = 'user.username')
+    user_id = serializers.ReadOnlyField(source = 'user.id')
 
     class Meta:
         model = GameComments
-        fields = ['id', 'game', 'user', 'username', 'content', 'created_at', 'updated_at']
-        read_only_fields = ['user', 'username', 'created_at', 'updated_at']
+        fields = ['id', 'game', 'user_id', 'username', 'content', 'created_at', 'updated_at']
+        read_only_fields = ['user_id', 'username', 'created_at', 'updated_at']
         extra_kwargs = {
             'game': {'required': False},
         }
