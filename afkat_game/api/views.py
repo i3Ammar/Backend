@@ -18,7 +18,6 @@ from rest_framework.permissions import IsAuthenticated
 from urllib.parse import urlencode, quote_plus
 from django.urls import NoReverseMatch
 from django.http import HttpRequest
-from sentry_sdk.integrations.beam import raise_exception
 
 from afkat_game.api.serializers import (
     GameCommentSerializer,
@@ -152,8 +151,8 @@ class GameViewSet(viewsets.ModelViewSet):
             game.refresh_from_db()
             return Response({"rating": serializer.data, "game_avg_rating": game.rating})
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    @action(methods=["get"], detail=True, url_path="download")
+    @transaction.atomic
+    @action(methods=["get"], detail=True,permission_classes = ([IsAuthenticated]) , url_path="download")
     def download_game(self, request, pk=None):
         game = get_object_or_404(Game, pk=pk)
         Game.objects.filter(pk = pk).update(download_count = F("download_count") + 1)
@@ -249,7 +248,7 @@ class GameJamViewSet(viewsets.ModelViewSet):
 
         return Response(serializer.data)
 
-    @action(detail=True, methods=["post"], permission_classes=[permissions.IsAuthenticated])
+    @action(detail=True, methods=["post"], permission_classes=[IsAuthenticated])
     def submit_game(self, request, pk=None):
         game_jam = self.get_object()
 
