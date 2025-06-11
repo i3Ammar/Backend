@@ -11,7 +11,7 @@ from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 
 from afkat_art.api.serializers import ArtSerializer, ArtRatingSerializer, ArtCommentSerializer
-from afkat_game.api.filters import GameFilter
+from afkat_game.api.filters import ArtFilter
 from .pagination import GameAndArtLayoutPagination
 from ..models import ArtModel, ArtRating, ArtComment
 from ..services.art_services import validate_art_file
@@ -22,7 +22,7 @@ class ArtViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     serializer_class = ArtSerializer
     filter_backends = [filters.SearchFilter, DjangoFilterBackend]
-    filterset_class = GameFilter
+    filterset_class = ArtFilter
     pagination_class = GameAndArtLayoutPagination
     search_fields = ["title__icontains"]
 
