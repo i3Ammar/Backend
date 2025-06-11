@@ -11,6 +11,7 @@ from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 
 from afkat_art.api.serializers import ArtSerializer, ArtRatingSerializer, ArtCommentSerializer
+from afkat_game.api.filters import GameFilter
 from .pagination import GameAndArtLayoutPagination
 from ..models import ArtModel, ArtRating, ArtComment
 from ..services.art_services import validate_art_file
@@ -21,6 +22,7 @@ class ArtViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     serializer_class = ArtSerializer
     filter_backends = [filters.SearchFilter, DjangoFilterBackend]
+    filterset_class = GameFilter
     pagination_class = GameAndArtLayoutPagination
     search_fields = ["title__icontains"]
 
@@ -29,7 +31,7 @@ class ArtViewSet(viewsets.ModelViewSet):
         serializer.save(author = self.request.user)
 
     def perform_destroy(self, instance):
-        if instance.creator == self.request.user:
+        if instance.author == self.request.user:
             instance.delete()
             return Response(status = status.HTTP_204_NO_CONTENT)
         else:

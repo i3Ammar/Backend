@@ -1,7 +1,7 @@
 import requests
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
-from django.db.models import F
+from django.db.models import F, Prefetch
 from django.http import FileResponse, HttpResponseRedirect, JsonResponse, HttpRequest, HttpResponse
 from django.views import View
 from django.utils import timezone
@@ -55,11 +55,23 @@ class GameViewSet(viewsets.ModelViewSet):
     ordering_fields = ["title", "created_at"]
     ordering = ["-created_at"]
 
-    @method_decorator(cache_page(60 * 5))
+    def get_queryset(self):
+        queryset = super().get_queryset()
+
+        if self.request.user.is_authenticated:
+            queryset = queryset.prefetch_related(
+                Prefetch(
+                    'ratings',
+                    queryset = GameRating.objects.filter(user = self.request.user),
+                    to_attr = 'user_ratings'
+                )
+            )
+        return queryset
+    # @method_decorator(cache_page(60 * 5))
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
 
-    @method_decorator(cache_page(60 * 5))
+    # @method_decorator(cache_page(60 * 5))
     def retrieve(self, request, *args, **kwargs):
         return super().retrieve(request, *args, **kwargs)
 
@@ -144,10 +156,10 @@ class GameViewSet(viewsets.ModelViewSet):
     @action(methods=["get"], detail=True, url_path="download")
     def download_game(self, request, pk=None):
         game = get_object_or_404(Game, pk=pk)
-        game.download_count += F("download_count") + 1
-        game.save(update_fields=["download_count"])
+        Game.objects.filter(pk = pk).update(download_count = F("download_count") + 1)
+        game.refresh_from_db()
         response = FileResponse(
-            game.game_file.open("rb"), as_attachment=True, filename=game.game_file.name
+            game.game_file_win.open("rb"), as_attachment=True, filename=game.game_file_win.name
         )
         return response
 
@@ -211,9 +223,7 @@ class GameJamViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(created_by=self.request.user)
 
-    @action(
-        detail=True, methods=["post"], permission_classes=[permissions.IsAuthenticated]
-    )
+    @action(detail=True, methods=["POST"], permission_classes=[permissions.IsAuthenticated])
     def participate(self, request, pk=None):
         game_jam = self.get_object()
         serializer = GameJamParticipationSerializer(
@@ -221,7 +231,7 @@ class GameJamViewSet(viewsets.ModelViewSet):
         )
 
         if serializer.is_valid():
-            serializer.save()  # This will call the service functions
+            serializer.save()
             action = serializer.validated_data["action"]
             return Response({"status": f"{action}ed game jam"})
 
@@ -239,9 +249,7 @@ class GameJamViewSet(viewsets.ModelViewSet):
 
         return Response(serializer.data)
 
-    @action(
-        detail=True, methods=["post"], permission_classes=[permissions.IsAuthenticated]
-    )
+    @action(detail=True, methods=["post"], permission_classes=[permissions.IsAuthenticated])
     def submit_game(self, request, pk=None):
         game_jam = self.get_object()
 
@@ -260,9 +268,6 @@ class GameJamViewSet(viewsets.ModelViewSet):
 @api_view(["GET"])
 @permission_classes([permissions.IsAuthenticated])
 def get_game_share_links(request: HttpRequest, game_pk: int):
-    """
-    Generates social media sharing links for a given game.
-    """
     try:
         game = get_object_or_404(Game, pk=game_pk)
         game_url = request.build_absolute_uri(game.get_absolute_url())
@@ -287,42 +292,7 @@ def get_game_share_links(request: HttpRequest, game_pk: int):
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_404_NOT_FOUND)
 
-url = "https://afkatservice-a4fegdfndqeddhgw.uaenorth-01.azurewebsites.net/afk_services/"
-@api_view(["GET"])
-@permission_classes([permissions.IsAuthenticated])
-def get_achievments(request: HttpRequest, achievement_id:int):
-    endpoint = f"/afk_achievements/{achievement_id}"
-    try :
 
-        response  = requests.get(url + endpoint)
-        response.raise_for_status()
-        return Response(response.json())
-    except Exception as e :
-        return Response({"error": str(e)}, status=status.HTTP_404_NOT_FOUND)
-#
-@api_view(["GET"])
-@permission_classes([permissions.IsAuthenticated])
-def get_game_achievement(request: HttpRequest, game_id:int):
-    endpoint = f"/afk_achievements/game/{game_id}"
-    try :
-        response  = requests.get(url + endpoint)
-        response.raise_for_status()
-        return Response(response.json())
-    except Exception as e :
-        return Response({"error": str(e)}, status=status.HTTP_404_NOT_FOUND)
-#
-#
-# @api_view(["POST"])
-# @permission_classes([permissions.IsAuthenticated])
-# def post_achievements(request: HttpRequest,):
-#     url = f"https://afkatservice-a4fegdfndqeddhgw.uaenorth-01.azurewebsites.net/afk_services/afk_achievements/"
-#     try :
-#         response  = requests.post(url)
-#         response.raise_for_status()
-#         return Response(status = HTTP_201_CREATED)
-#     except Exception as e :
-#         return Response({"error": str(e)}, status=status.HTTP_404_NOT_FOUND)
-#
 
 class AFKGatewayView(LoginRequiredMixin, View):
     BASE_URL = "https://afkat-f8cfgpgrhkencybn.israelcentral-01.azurewebsites.net"

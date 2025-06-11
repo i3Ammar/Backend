@@ -4,12 +4,12 @@ from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 from django.views.decorators.vary import vary_on_headers
-from rest_framework import status
-from rest_framework import viewsets
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.decorators import action, api_view
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
+from rest_framework import filters, permissions, status, viewsets
 
 from afkat_auth.permissions import UserIsOwnerOrReadOnly
 from afkat_home.api.filters import PostFilterSet
@@ -23,6 +23,11 @@ from afkat_home.utils import get_available_themes
 
 class PostViewSet(viewsets.ModelViewSet):
     permission_classes = [UserIsOwnerOrReadOnly | IsAdminUser]
+    filter_backends = [
+        DjangoFilterBackend,
+        filters.SearchFilter,
+        filters.OrderingFilter,
+    ]
     queryset = (
         Post.objects.select_related("author", "author__userProfile")
         .prefetch_related("likes")
