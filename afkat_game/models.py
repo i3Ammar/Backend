@@ -125,7 +125,7 @@ class GameJam(models.Model):
     start_date = models.DateTimeField(db_index=True)
     end_date = models.DateTimeField(db_index=True)
     theme = models.CharField(
-        max_length=200, help_text="theme of the game jam", db_index=True
+        max_length=1000, help_text="theme of the game jam", db_index=True
     )
     prizes = models.TextField(max_length=200, blank=True, null=True)
     participants = models.ManyToManyField(
