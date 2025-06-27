@@ -41,6 +41,7 @@ class PostSerializer(serializers.ModelSerializer):
     user_profile_image = serializers.URLField(
         source = "author.userProfile.profile_image.url", read_only = True
     )
+    user_is_following = serializers.BooleanField(source = "author.is_following ", read_only = True, default = False)
     likes_count = serializers.SerializerMethodField()
     is_liked_by_user = serializers.BooleanField(read_only = True, default = False)
 

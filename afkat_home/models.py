@@ -33,6 +33,8 @@ class Post(models.Model):
     image = models.ImageField(upload_to="post_images/", null=True, blank=True)
     theme = models.CharField(max_length=100, null=True, blank=True)
     comments = GenericRelation(Comment)
+    video_file = models.FileField(upload_to = "post_videos/", null = True, blank = True)
+    video_url = models.URLField(max_length = 255, null = True, blank = True, help_text = "URL for embedded videos (YouTube, Vimeo, etc.)")
     theme_zoom_number = models.IntegerField(default=110)
     likes = models.ManyToManyField(
         settings.AUTH_USER_MODEL, related_name="liked_posts", blank=True
