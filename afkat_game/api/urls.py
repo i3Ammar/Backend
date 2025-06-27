@@ -25,6 +25,6 @@ urlpatterns = [
         get_game_share_links,
         name="game-share-links",
     ),
-    re_path(r'^afk-service(?:/.*)?$', AFKGatewayView.as_view()),
+    re_path(r"^afk-service(?:/.*)?$", AFKGatewayView.as_view()),
     # path("achivement_id/<int:achievement_id>", get_achievments,name='achivement_id_get'),  # New endpoint
 ]

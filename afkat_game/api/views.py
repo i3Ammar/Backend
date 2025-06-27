@@ -99,7 +99,7 @@ class GameViewSet(viewsets.ModelViewSet):
         validate_game_file(self, serializer.validated_data["game_file_win"])
         validate_game_file(self, serializer.validated_data["game_file"])
         game = serializer.save(creator=self.request.user)
-        # serializer.save()
+
         relative_path = process_webgl_upload(
             serializer.validated_data["game_file"], game.id
         )
