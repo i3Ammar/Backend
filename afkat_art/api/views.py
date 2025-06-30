@@ -38,12 +38,10 @@ class ArtViewSet(viewsets.ModelViewSet):
             raise PermissionDenied("You dont have permission to delete this ArtModle.")
 
     @method_decorator(vary_on_headers("Authorization", "Cookie"))
-    @method_decorator(cache_page(30))
     def retrieve(self, request, *args, **kwargs):
         return super().retrieve(request, *args, **kwargs)
 
     @method_decorator(vary_on_headers("Authorization", "Cookie"))
-    @method_decorator(cache_page(30))
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
 

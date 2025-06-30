@@ -5,7 +5,7 @@ from rest_framework.permissions import IsAdminUser
 
 from afkat.utils.serializer_field import CompressedImageField
 from afkat_auth.models import (
-    User,
+    User, Follow,
 )
 from afkat_auth.permissions import UserIsOwnerOrReadOnly
 from afkat_home.models import Comment, Post
@@ -41,7 +41,7 @@ class PostSerializer(serializers.ModelSerializer):
     user_profile_image = serializers.URLField(
         source = "author.userProfile.profile_image.url", read_only = True
     )
-    user_is_following = serializers.BooleanField(source = "author.is_following ", read_only = True )
+    user_is_following = serializers.SerializerMethodField()
     likes_count = serializers.SerializerMethodField()
     is_liked_by_user = serializers.BooleanField(read_only = True, default = False)
 
@@ -66,6 +66,26 @@ class PostSerializer(serializers.ModelSerializer):
         user = self.context["request"].user
         if user and user.is_authenticated:
             return obj.likes.filter(id = user.id).exists()
+        return False
+
+    # def get_user_is_following(self, obj):
+    #     request = self.context.get('request')
+    #     if request and request.user.is_authenticated:
+    #         return Follow.objects.filter(follower = request.user, following = obj.author).exists()
+    #     return False
+
+    def get_user_is_following(self, obj):
+
+        request = self.context.get('request')
+        if request and request.user.is_authenticated:
+            if not hasattr(request, '_following_cache'):
+                followed_users_ids = set(
+                    Follow.objects.filter(follower = request.user).values_list('following_id', flat = True)
+                )
+                request._following_cache = followed_users_ids
+
+            return obj.author.id in request._following_cache
+
         return False
 
     def create(self, validated_data):
