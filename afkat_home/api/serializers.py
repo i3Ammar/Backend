@@ -26,7 +26,8 @@ class AuthorSerializer(serializers.ModelSerializer):
 
 class CommentSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required = True)
-    creator = AuthorSerializer(read_only = True)
+    # creator = AuthorSerializer(read_only = True)
+    creator = serializers.ReadOnlyField(source = "creator.username")
 
     class Meta:
         model = Comment

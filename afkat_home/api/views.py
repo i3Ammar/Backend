@@ -1,3 +1,4 @@
+from django.db import transaction
 from django.db.models import Q, Exists, OuterRef
 from django.http import JsonResponse
 from django.utils import timezone
@@ -15,9 +16,9 @@ from afkat_auth.permissions import UserIsOwnerOrReadOnly
 from afkat_home.api.filters import PostFilterSet
 from afkat_home.api.serializers import (
     PostSerializer,
-    PostDetailSerializer,
+    PostDetailSerializer, CommentSerializer,
 )
-from afkat_home.models import Post
+from afkat_home.models import Post, Comment
 from afkat_home.utils import get_available_themes
 
 
@@ -121,6 +122,25 @@ class PostViewSet(viewsets.ModelViewSet):
             status = status.HTTP_200_OK,
         )
 
+    @action(detail = True, methods = ["post"], permission_classes = [IsAuthenticated])
+    @transaction.atomic
+    def add_comment(self, request, pk = None):
+        post = self.get_object()
+
+        comment = Comment(
+            creator = request.user,
+            content = request.data.get("content"),
+            content_object = post
+        )
+        comment.save()
+
+        serializer = CommentSerializer(comment)
+
+        return Response(
+            serializer.data,
+            status = status.HTTP_201_CREATED
+        )
+
 
 @api_view(["GET"])
 def get_post_share_links(request, post_pk):
@@ -128,11 +148,8 @@ def get_post_share_links(request, post_pk):
     try:
         post = Post.objects.get(pk = post_pk)
 
-        # Get the absolute URL to the post detail page
-        # You'll need to ensure Post has a get_absolute_url method
         post_url = request.build_absolute_uri(post.get_absolute_url())
 
-        # Prepare sharing links for different platforms
         share_links = {
             "facebook": f"https://www.facebook.com/sharer/sharer.php?u={post_url}",
             "twitter": f"https://twitter.com/intent/tweet?text={post.title}&url={post_url}",
