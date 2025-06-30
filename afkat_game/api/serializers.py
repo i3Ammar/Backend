@@ -74,13 +74,16 @@ class GameJamSerializer(serializers.ModelSerializer):
     participants = serializers.SlugRelatedField(
         many = True, read_only = True, slug_field = 'username'
     )
+    submitted_games = serializers.SlugRelatedField(
+        many = True , read_only = True, slug_field = 'title'
+    )
 
     class Meta:
         model = GameJam
         fields = [
             'id', 'title', 'description', 'created_by',
             'start_date', 'end_date', 'theme', 'prizes',
-            'participants', 'participants_count',
+            'participants', 'participants_count','submitted_games',
             'is_active', 'game_jam_thumbnail', 'isOnline', 'location'
         ]
         read_only_fields = ["created_by"]

@@ -2,6 +2,7 @@
 from django.db import transaction
 from django.utils import timezone
 from rest_framework.exceptions import ValidationError
+from afkat_game.models import GameJam  , Game
 
 @transaction.atomic
 def join_game_jam(user, game_jam):
@@ -14,4 +15,5 @@ def join_game_jam(user, game_jam):
     game_jam.participants.add(user)
 
 def leave_game_jam(user, game_jam):
+    Game.objects.filter(author = user, game_jam = game_jam).delete()
     game_jam.participants.remove(user)

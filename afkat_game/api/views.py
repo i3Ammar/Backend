@@ -1,5 +1,6 @@
 import requests
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.serializers import get_serializer
 from django.db import transaction
 from django.db.models import F, Prefetch
 from django.http import FileResponse, HttpResponseRedirect, JsonResponse, HttpRequest, HttpResponse
@@ -186,6 +187,7 @@ class GameJamViewSet(viewsets.ModelViewSet):
         GameJam.objects.all()
         .select_related("created_by")
         .prefetch_related("participants", "submitted_games")
+        .order_by('-start_date')
     )
     serializer_class = GameJamSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
@@ -260,6 +262,7 @@ class GameJamViewSet(viewsets.ModelViewSet):
 
         game_jam.submitted_games.add(game)
         return Response({"status": "game submitted successfully"})
+
 
 
 @api_view(["GET"])
